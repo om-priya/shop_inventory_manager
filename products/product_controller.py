@@ -1,86 +1,75 @@
 from products.product import create_product
+from database import DatabaseConnection
+from tabulate import tabulate
 
 
 # To showcase all the products
 def show_products():
-    try:
-        with open("products.txt", "r") as file:
-            product_list = file.readlines()
-            for product in product_list:
-                # Converting each product to list for better formatting
-                product = product.split(",")
-                print(product)
+    with DatabaseConnection("products.db") as connection:
+        cursor = connection.cursor()
 
-    except FileNotFoundError:
-        print("There are no Products Available")
+        cursor.execute("SELECT * FROM product")
+
+        products_data = cursor.fetchall()
+
+    print(tabulate(products_data))
 
 
 # Find Product by name
 def find_product(name):
-    with open("products.txt", "r") as file:
-        product_list = file.readlines()
-        for product in product_list:
-            product = product.split(",")
-            # Comparing Name
-            if name.strip().lower() == product[1].strip().lower():
-                return product
-        print("Product Not Found")
+    with DatabaseConnection("products.db") as connection:
+        cursor = connection.cursor()
+        query = "SELECT * FROM product WHERE name = (?)"
+        params = (name.lower(),)
+        cursor.execute(query, params)
+        product = cursor.fetchall()
+    return product
 
 
 # To get product by name
 def get_product_by_name():
-    try:
-        name = input("Enter the product name: ")
-        product = find_product(name)
-        if product != None:
-            print(product)
-
-    except FileNotFoundError:
-        print("There are no Products Available")
+    name = input("Enter the product name: ")
+    product = find_product(name)
+    if len(product) == 0:
+        print("Product Not Found")
+    else:
+        print(tabulate(product))
 
 
 # Update Product (only owner can perform)
-# find that product and delete it then create new product and append it
-def update_product():
-    lists = []
-    name = input("Enter the product you want to be updated: ")
+def helper(data):
+    if (
+        data == "name"
+        or data == "price"
+        or data == "discount"
+        or data == "quantity"
+        or data == "category"
+    ):
+        return True
+    return False
 
-    # Find Product
-    product_to_be_updated = find_product(name)
-    if product_to_be_updated == None:
-        return
 
-    # Delete Product Logic
-    product_to_be_updated = (",").join(product_to_be_updated)
-    with open("products.txt", "r") as file:
-        product_list = file.readlines()
-        for product in product_list:
-            if product.strip() == product_to_be_updated.strip():
-                continue
-            lists.append(product)
-    with open("products.txt", "w") as file:
-        file.writelines(lists)
-
-    # call create product for updated product
-    create_product()
+# def update_product():
+#     name = input("Enter the name of product you want to be upgraded: ").lower()
+#     product = find_product(name)
+#     if len(product) == 0:
+#         print("Product Not Found")
+#         return
+#     while True:
+#         updated_field = input("Enter the field You want to update")
+#         if helper(updated_field):
+#             break
+#     with DatabaseConnection("products.db") as connection:
+#         cursor = connection.cursor()
+#         query = "UPDATE product SET (?) = (?) WHERE name = '(?)'"
 
 
 # Delete Product (only owner can perform)
 def delete_product():
-    lists = []
     name = input("Enter the name the product you want to delete: ")
-    product_to_be_deleted = find_product(name)
-    if product_to_be_deleted == None:
-        return
-    product_to_be_deleted = (",").join(product_to_be_deleted)
-    with open("products.txt", "r") as file:
-        product_list = file.readlines()
-        for product in product_list:
-            if product.strip() == product_to_be_deleted.strip():
-                continue
-            lists.append(product)
-
-    with open("products.txt", "w") as file:
-        file.writelines(lists)
-
+    with DatabaseConnection("products.db") as connection:
+        cursor = connection.cursor()
+        query = "DELETE FROM product WHERE name = (?)"
+        params = (name.lower(),)
+        cursor.execute(query, params)
     print("Product Deleted Successfully")

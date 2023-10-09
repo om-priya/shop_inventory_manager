@@ -2,6 +2,7 @@ from cryptography.fernet import Fernet
 from users.user import ShopOwner
 import validators.user_validator
 import maskpass
+from database import DatabaseConnection
 
 # ***** To Generate Key For Encryption *****
 # key = Fernet.generate_key()
@@ -14,21 +15,17 @@ def check_login():
     email = input("Enter Your Email: ")
     entered_password = maskpass.advpass()
 
-    try:
-        with open("users.txt", "r") as file:
-            user_list = file.readlines()
-            for user in user_list:
-                user = user.split(",")
-                if email.strip().lower() == user[1].strip().lower():
-                    decrypted_value = user[6].strip()
-                    if entered_password == decrypted_value:
-                        return True
-            else:
-                print("Owner Not Found")
-                return False
-    except FileNotFoundError:
-        print("Currently No User Found")
+    with DatabaseConnection("users.db") as connection:
+        cursor = connection.cursor()
+
+        query = "SELECT * FROM user WHERE email = (?) AND password = (?)"
+        params = (email, entered_password)
+        cursor.execute(query, params)
+
+        user_info = cursor.fetchone()
+    if user_info == None:
         return False
+    return True
 
 
 # Creating Owner Object and storing it in users.txt

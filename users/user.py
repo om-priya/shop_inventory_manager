@@ -1,3 +1,5 @@
+from database import DatabaseConnection
+
 # Human Class
 class Human:
     try:
@@ -30,9 +32,33 @@ class ShopOwner(Human):
 
         # saving users to user-file
         def save_user(self):
-            with open("users.txt", "a") as user_file:
-                template = f"{self.name}, {self.email}, {self.phone}, {self.gender}, {self.role}, {self.shop_name}, {self.password}\n"
-                user_file.write(template)
+            with DatabaseConnection("users.db") as connection:
+                cursor = connection.cursor()
+                cursor.execute(
+                    """CREATE TABLE IF NOT EXISTS user(
+                               name TEXT,
+                               email TEXT,
+                               phone TEXT,
+                               gender TEXT,
+                               role TEXT,
+                               shop_name TEXT,
+                               password TEXT
+                )"""
+                )
+                query = """INSERT INTO user
+                            (name, email, phone, gender, role, shop_name, password)
+                            VALUES
+                            (?,?,?,?,?,?,?)"""
+                data_tuple = (
+                    self.name,
+                    self.email,
+                    self.phone,
+                    self.gender,
+                    self.role,
+                    self.shop_name,
+                    self.password
+                )
+                cursor.execute(query, data_tuple)
 
     except Exception:
         print(Exception.__name__)

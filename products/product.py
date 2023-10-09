@@ -1,5 +1,6 @@
 import shortuuid
 from validators.product_validator import *
+from database import DatabaseConnection
 
 
 class Products:
@@ -15,9 +16,31 @@ class Products:
 
         # Saving Product to File
         def save_product(self):
-            with open("products.txt", "a") as product_file:
-                template = f"{self.id}, {self.name}, {self.price}, {self.quantity}, {self.discount}, {self.category}\n"
-                product_file.write(template)
+            with DatabaseConnection("products.db") as connection:
+                cursor = connection.cursor()
+                cursor.execute(
+                    """CREATE TABLE IF NOT EXISTS product(
+                               id TEXT,
+                               name TEXT,
+                               price REAL,
+                               quantity INTEGER,
+                               discount REAL,
+                               category TEXT 
+                )"""
+                )
+                query = """INSERT INTO product
+                            (id, name, price, quantity, discount, category)
+                            VALUES
+                            (?,?,?,?,?,?)"""
+                data_tuple = (
+                    self.id,
+                    self.name,
+                    float(self.price),
+                    int(self.quantity),
+                    float(self.discount),
+                    self.category,
+                )
+                cursor.execute(query, data_tuple)
 
     except Exception:
         print(Exception.__name__)
