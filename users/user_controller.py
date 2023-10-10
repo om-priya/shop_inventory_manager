@@ -24,15 +24,17 @@ def check_login():
         params = (email,)
         cursor.execute(query, params)
         user_info = cursor.fetchone()
+        # decrypting the db password
         db_password = decrypt_password(user_info[0])
 
+    # Converting the entered_pass to bytes and then comparing
     byte_enter_pass = bytes(entered_password, "utf-8")
     if byte_enter_pass == db_password:
         return True
     return False
 
 
-# Creating Owner Object and storing it in users.txt
+# Creating Owner Object and encrypting password and storing it in users.db
 @exception_handler
 def signup():
     owner_object = {}

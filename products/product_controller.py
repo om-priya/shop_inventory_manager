@@ -71,6 +71,7 @@ def update_product():
         print("Invalid Input")
         updated_field = input("Enter the field You want to update").lower()
 
+    # Calling function according to the updated_field
     value = None
     match updated_field:
         case "name":
@@ -84,6 +85,7 @@ def update_product():
         case "category":
             value = product_validator.category_validator()
 
+    # Setting new value to the db
     with DatabaseConnection("products.db") as connection:
         cursor = connection.cursor()
 
