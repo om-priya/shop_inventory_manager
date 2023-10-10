@@ -17,7 +17,7 @@ def main():
     # Showing Owner Functionality
     if who_are_you == "owner":
         logged_in = False
-        while logged_in == False:
+        while logged_in == False or logged_in == None:
             user_request = int(input("Enter 1 for login and 2 for signup"))
             # Checking for logged in usser
             if user_request == 1:
