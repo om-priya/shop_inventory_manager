@@ -3,6 +3,7 @@ from users.user import ShopOwner
 import validators.user_validator
 import maskpass
 from database import DatabaseConnection
+from exception_handler.sql_exception_handler import exception_handler
 
 # ***** To Generate Key For Encryption *****
 # key = Fernet.generate_key()
@@ -11,6 +12,7 @@ from database import DatabaseConnection
 
 
 # Check For Login Users
+@exception_handler
 def check_login():
     email = input("Enter Your Email: ")
     entered_password = maskpass.advpass()
@@ -29,6 +31,7 @@ def check_login():
 
 
 # Creating Owner Object and storing it in users.txt
+@exception_handler
 def signup():
     owner_object = {}
     owner_object["name"] = validators.user_validator.name_validator().lower()

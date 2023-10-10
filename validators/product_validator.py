@@ -1,27 +1,11 @@
 import re
-
-
-# error handling as decorator
-def error_handling(func):
-    def wrapper(*args, **kwargs):
-        try:
-            res = func(*args, **kwargs)
-            if res == False:
-                raise Exception
-        except:
-            print("Some Error Occurred")
-        finally:
-            return res
-
-    return wrapper
-
+from exception_handler.validation_exception import validation_exception
 
 # validator for all the fields
-@error_handling
+@validation_exception
 def validator(pattern, input_data):
     x = re.search(pattern, input_data)
     if x == None:
-        print("Invalid Input")
         return False
     return True
 

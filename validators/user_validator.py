@@ -1,22 +1,9 @@
 import re
 import maskpass
+from exception_handler.validation_exception import validation_exception
 
 
-def error_handling(func):
-    def wrapper(*args, **kwargs):
-        try:
-            res = func(*args, **kwargs)
-            if res == False:
-                raise Exception
-        except:
-            print("Invalid Input")
-        finally:
-            return res
-
-    return wrapper
-
-
-@error_handling
+@validation_exception
 def validator(pattern, input_data):
     x = re.search(pattern, input_data)
     if x == None:
