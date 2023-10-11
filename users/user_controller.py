@@ -4,6 +4,8 @@ import maskpass
 from database import DatabaseConnection
 from exception_handler.sql_exception_handler import exception_handler
 from encryption.encryption import *
+from loggers.general_logger import GeneralLogger
+
 
 # ***** To Generate Key For Encryption *****
 # key = Fernet.generate_key()
@@ -19,7 +21,6 @@ def check_login():
 
     with DatabaseConnection("users.db") as connection:
         cursor = connection.cursor()
-
         query = "SELECT password FROM user WHERE email = (?)"
         params = (email,)
         cursor.execute(query, params)
@@ -31,6 +32,7 @@ def check_login():
     byte_enter_pass = bytes(entered_password, "utf-8")
     if byte_enter_pass == db_password:
         return True
+    GeneralLogger.info("Unsuccessfull Login", "users.log")
     return False
 
 

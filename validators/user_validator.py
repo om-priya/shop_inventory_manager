@@ -1,12 +1,14 @@
 import re
 import maskpass
 from exception_handler.validation_exception import validation_exception
+from loggers.general_logger import GeneralLogger
 
 
 @validation_exception
 def validator(pattern, input_data):
     x = re.search(pattern, input_data)
     if x == None:
+        GeneralLogger.warning("Invalid Input", "users.log")
         print("Invalid Input")
         return False
     return True

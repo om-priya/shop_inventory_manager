@@ -72,3 +72,10 @@ def main():
 # Calling Main Function
 if __name__ == "__main__":
     main()
+
+
+"""
+*********** FeedBacks **************
+1> Look into the loggers
+2> Try to shift your query to different file and then import it to the file to use it
+"""

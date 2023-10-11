@@ -1,4 +1,6 @@
 from database import DatabaseConnection
+from loggers.general_logger import GeneralLogger
+
 
 # Human Class
 class Human:
@@ -37,7 +39,7 @@ class ShopOwner(Human):
                 cursor.execute(
                     """CREATE TABLE IF NOT EXISTS user(
                                name TEXT,
-                               email TEXT,
+                               email TEXT UNIQUE,
                                phone TEXT,
                                gender TEXT,
                                role TEXT,
@@ -56,10 +58,10 @@ class ShopOwner(Human):
                     self.gender,
                     self.role,
                     self.shop_name,
-                    self.password
+                    self.password,
                 )
                 cursor.execute(query, data_tuple)
 
     except Exception:
-        print(Exception.__name__)
+        GeneralLogger.error("Unable to Insert Data", "users.log")
         print("Something Went Wrong Try Again !!")

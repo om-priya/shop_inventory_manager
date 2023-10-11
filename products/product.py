@@ -1,6 +1,8 @@
 import shortuuid
 from validators.product_validator import *
 from database import DatabaseConnection
+from datetime import datetime
+from loggers.general_logger import GeneralLogger
 
 
 class Products:
@@ -25,13 +27,14 @@ class Products:
                                price REAL,
                                quantity INTEGER,
                                discount REAL,
-                               category TEXT 
+                               category TEXT,
+                               created_date TEXT
                 )"""
                 )
                 query = """INSERT INTO product
-                            (id, name, price, quantity, discount, category)
+                            (id, name, price, quantity, discount, category, created_date)
                             VALUES
-                            (?,?,?,?,?,?)"""
+                            (?,?,?,?,?,?,?)"""
                 data_tuple = (
                     self.id,
                     self.name,
@@ -39,12 +42,13 @@ class Products:
                     int(self.quantity),
                     float(self.discount),
                     self.category,
+                    datetime.now().strftime("%d-%m-%Y"),
                 )
                 cursor.execute(query, data_tuple)
 
     except Exception:
-        print(Exception.__name__)
-        print("Something Went Wrong Try Again !!")
+        print("Something Went Wrong")
+        GeneralLogger.error("Something Went Wrong With Inserting Rows", "products.log")
 
 
 # Create Product Object and Save to txt file

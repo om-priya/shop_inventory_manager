@@ -2,6 +2,8 @@ from database import DatabaseConnection
 from tabulate import tabulate
 from validators import product_validator
 from exception_handler.sql_exception_handler import exception_handler
+from datetime import datetime
+from loggers.general_logger import GeneralLogger
 
 
 # To showcase all the products
@@ -34,6 +36,7 @@ def get_product_by_name():
     name = input("Enter the product name: ")
     product = find_product(name)
     if len(product) == 0 or product == None:
+        GeneralLogger.info(f"{name} Product Not Found", "products.log")
         print("Product Not Found")
     else:
         print(tabulate(product))
@@ -60,6 +63,7 @@ def update_product():
     # Check for it's existence
     product = find_product(name)
     if product == None:
+        GeneralLogger.info(f"{name} Product Not Found", "products.log")
         print("Product Not Found")
         return
 
@@ -68,6 +72,7 @@ def update_product():
     while True:
         if helper(updated_field):
             break
+        GeneralLogger.info("Invalid Input For Field", "products.log")
         print("Invalid Input")
         updated_field = input("Enter the field You want to update").lower()
 
@@ -88,11 +93,14 @@ def update_product():
     # Setting new value to the db
     with DatabaseConnection("products.db") as connection:
         cursor = connection.cursor()
-
+        str(datetime.now().strftime("%d-%m-%Y"))
         cursor.execute(
-            "UPDATE product SET {} = (?) WHERE name = (?)".format(updated_field),
+            "UPDATE product SET {} = (?) WHERE name = (?)".format(
+                updated_field,
+            ),
             (value, name),
         )
+        GeneralLogger.info(f"Rows Updated Successfully for {name}", "products.log")
         print("Rows Updated Successfully")
 
 
@@ -105,4 +113,5 @@ def delete_product():
         query = "DELETE FROM product WHERE name = (?)"
         params = (name.lower(),)
         cursor.execute(query, params)
+    GeneralLogger.info(f"{name} Deleted Successfully", "products.log")
     print("Product Deleted Successfully")
