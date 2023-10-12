@@ -8,10 +8,10 @@ def exception_handler(func):
             res = func(*args, **kwargs)
         except sqlite3.OperationalError:
             print("Error While Executing the query")
-            res = None
+            res = [False, ""]
         except Exception:
             print("Some Error Occured Try Again!! ")
-            res = None
+            res = [False, ""]
         finally:
             return res
 

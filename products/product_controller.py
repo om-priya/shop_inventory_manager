@@ -4,15 +4,20 @@ from validators import product_validator
 from exception_handler.sql_exception_handler import exception_handler
 from datetime import datetime
 from loggers.general_logger import GeneralLogger
+from query.product_query import ProductQuery
 
 
 # To showcase all the products
 @exception_handler
-def show_products():
+def show_products(user_id):
+    if user_id == "":
+        GeneralLogger.warning("Someone Tried to enter the Shop", "users.log")
+        print("Ask the Owner to Logged In First Shop is Closed")
+        return
     with DatabaseConnection("products.db") as connection:
         cursor = connection.cursor()
 
-        cursor.execute("SELECT * FROM product")
+        cursor.execute(ProductQuery.GET_ALL_PRODUCT, user_id)
 
         products_data = cursor.fetchall()
 
@@ -21,21 +26,24 @@ def show_products():
 
 # Find Product by name
 @exception_handler
-def find_product(name):
+def find_product(name, user_id):
+    if user_id == "":
+        GeneralLogger.warning("Someone Tried to enter the Shop", "users.log")
+        print("Ask the Owner to Logged In First Shop is Closed")
+        return
     with DatabaseConnection("products.db") as connection:
         cursor = connection.cursor()
-        query = "SELECT * FROM product WHERE name = (?)"
-        params = (name.lower(),)
-        cursor.execute(query, params)
+        params = (name.lower(), user_id.strip())
+        cursor.execute(ProductQuery.FIND_PRODUCT_BY_NAME, params)
         product = cursor.fetchall()
     return product
 
 
 # To get product by name
-def get_product_by_name():
+def get_product_by_name(user_id):
     name = input("Enter the product name: ")
-    product = find_product(name)
-    if len(product) == 0 or product == None:
+    product = find_product(name, user_id)
+    if not product:
         GeneralLogger.info(f"{name} Product Not Found", "products.log")
         print("Product Not Found")
     else:
@@ -56,13 +64,13 @@ def helper(data):
 
 
 @exception_handler
-def update_product():
+def update_product(user_id):
     # Take the name of the product
     name = input("Enter the name of product you want to be upgraded: ").lower()
 
     # Check for it's existence
-    product = find_product(name)
-    if product == None:
+    product = find_product(name, user_id)
+    if not product:
         GeneralLogger.info(f"{name} Product Not Found", "products.log")
         print("Product Not Found")
         return
@@ -95,7 +103,7 @@ def update_product():
         cursor = connection.cursor()
         str(datetime.now().strftime("%d-%m-%Y"))
         cursor.execute(
-            "UPDATE product SET {} = (?) WHERE name = (?)".format(
+            ProductQuery.UPDATE_PRODUCT.format(
                 updated_field,
             ),
             (value, name),
@@ -106,12 +114,16 @@ def update_product():
 
 # Delete Product (only owner can perform)
 @exception_handler
-def delete_product():
+def delete_product(user_id):
     name = input("Enter the name the product you want to delete: ")
+    product = find_product(name, user_id)
+    if not product:
+        GeneralLogger.info(f"{name} Product Not Found", "products.log")
+        print("Product Not Found")
+        return
     with DatabaseConnection("products.db") as connection:
         cursor = connection.cursor()
-        query = "DELETE FROM product WHERE name = (?)"
-        params = (name.lower(),)
-        cursor.execute(query, params)
+        params = (name.lower(), user_id.strip())
+        cursor.execute(ProductQuery.DELETE_PRODUCT, params)
     GeneralLogger.info(f"{name} Deleted Successfully", "products.log")
     print("Product Deleted Successfully")

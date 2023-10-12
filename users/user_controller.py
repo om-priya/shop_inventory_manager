@@ -5,7 +5,7 @@ from database import DatabaseConnection
 from exception_handler.sql_exception_handler import exception_handler
 from encryption.encryption import *
 from loggers.general_logger import GeneralLogger
-
+from query.user_query import UserQuery
 
 # ***** To Generate Key For Encryption *****
 # key = Fernet.generate_key()
@@ -21,19 +21,20 @@ def check_login():
 
     with DatabaseConnection("users.db") as connection:
         cursor = connection.cursor()
-        query = "SELECT password FROM user WHERE email = (?)"
         params = (email,)
-        cursor.execute(query, params)
+        cursor.execute(UserQuery.LOGIN_QUERY, params)
         user_info = cursor.fetchone()
         # decrypting the db password
+        print(user_info)
         db_password = decrypt_password(user_info[0])
+        user_id = user_info[1]
 
     # Converting the entered_pass to bytes and then comparing
     byte_enter_pass = bytes(entered_password, "utf-8")
     if byte_enter_pass == db_password:
-        return True
+        return [True, user_id]
     GeneralLogger.info("Unsuccessfull Login", "users.log")
-    return False
+    return [False, ""]
 
 
 # Creating Owner Object and encrypting password and storing it in users.db
