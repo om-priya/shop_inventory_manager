@@ -1,6 +1,6 @@
+import maskpass
 from users.user import ShopOwner
 import validators.user_validator
-import maskpass
 from database import DatabaseConnection
 from exception_handler.sql_exception_handler import exception_handler
 from encryption.encryption import *
@@ -25,7 +25,6 @@ def check_login():
         cursor.execute(UserQuery.LOGIN_QUERY, params)
         user_info = cursor.fetchone()
         # decrypting the db password
-        print(user_info)
         db_password = decrypt_password(user_info[0])
         user_id = user_info[1]
 

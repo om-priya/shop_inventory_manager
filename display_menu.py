@@ -1,4 +1,10 @@
+"""
+This Module is used to show prompt in the console
+"""
+
+
 def owner_display_menu():
+    """This function is responsible for showing owner display menu to the prompt"""
     print(
         """What do you want to do? (select options)
     1> Add Product
@@ -12,10 +18,21 @@ def owner_display_menu():
 
 
 def user_display_menu():
+    """This function is responsible for showing user display menu to the prompt"""
     print(
         """What do you want to do? (select options)
             1> Show All Product
             2> Get Product By Name
             3> Quit App
+        """
+    )
+
+
+def prime_display():
+    print(
+        """Who are You?
+            1> Owner
+            2> User
+            3> Quit
         """
     )

@@ -1,7 +1,12 @@
+"""
+Context Manager for the db which automatically close the connection and handle the exception
+"""
 import sqlite3
 
 
 class DatabaseConnection:
+    """Context Manager Class for sqlite3"""
+
     def __init__(self, host):
         self.connection = None
         self.host = host

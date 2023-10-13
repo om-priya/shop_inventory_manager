@@ -3,9 +3,9 @@ def validation_exception(func):
     def wrapper(*args, **kwargs):
         try:
             res = func(*args, **kwargs)
-            if res == False:
+            if res is False:
                 raise Exception
-        except:
+        except Exception:
             print("Invalid Input")
         finally:
             return res

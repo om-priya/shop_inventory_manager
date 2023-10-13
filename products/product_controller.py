@@ -1,8 +1,9 @@
-from database import DatabaseConnection
+from datetime import datetime
 from tabulate import tabulate
+
+from database import DatabaseConnection
 from validators import product_validator
 from exception_handler.sql_exception_handler import exception_handler
-from datetime import datetime
 from loggers.general_logger import GeneralLogger
 from query.product_query import ProductQuery
 

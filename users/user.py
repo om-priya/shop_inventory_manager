@@ -1,6 +1,7 @@
+import shortuuid
+
 from database import DatabaseConnection
 from loggers.general_logger import GeneralLogger
-import shortuuid
 from query.user_query import UserQuery
 
 

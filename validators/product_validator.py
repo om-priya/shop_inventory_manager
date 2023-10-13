@@ -1,3 +1,4 @@
+"""This module is resp"""
 import re
 from exception_handler.validation_exception import validation_exception
 from loggers.general_logger import GeneralLogger
@@ -6,8 +7,9 @@ from loggers.general_logger import GeneralLogger
 # validator for all the fields
 @validation_exception
 def validator(pattern, input_data):
+    """General Validator which return either True or False"""
     x = re.search(pattern, input_data)
-    if x == None:
+    if x is None:
         GeneralLogger.warning("Invalid Input", "products.log")
         return False
     return True
@@ -15,9 +17,10 @@ def validator(pattern, input_data):
 
 # Accepted Syntax: <string> <string>
 def name_validator():
+    """Name Validator Function"""
     name = ""
     validated = False
-    while validated == False:
+    while validated is False:
         name = input("Enter the name of the product: ")
         validated = validator("^[A-Za-z]+([\ A-Za-z]+)*", name)
     return name
@@ -25,9 +28,10 @@ def name_validator():
 
 # Accepted Syntax: <number>.<number>
 def price_validator():
+    """Price Validator Function"""
     price = ""
     validated = False
-    while validated == False:
+    while validated is False:
         price = input("Enter the price of the product: ")
         validated = validator("[0-9]*[.][0-9]*", price)
     return price
@@ -35,9 +39,10 @@ def price_validator():
 
 # Accepted Syntax: <number>
 def quantity_validator():
+    """Quantity Validator Function"""
     quantity = ""
     validated = False
-    while validated == False:
+    while validated is False:
         quantity = input("Enter the quantity of the product: ")
         validated = validator("\d+", quantity)
     return quantity
@@ -45,9 +50,10 @@ def quantity_validator():
 
 # Accepted Syntax: <number>.<number>
 def discount_validator():
+    """Discount Validator Function"""
     discount = ""
     validated = False
-    while validated == False:
+    while validated is False:
         discount = input("Enter the discount of the product: ")
         validated = validator("[0-9]*[.][0-9]*", discount)
     return discount
@@ -55,9 +61,10 @@ def discount_validator():
 
 # Accepted Syntax: <string> <string>
 def category_validator():
+    """Category Validator Function"""
     category = ""
     validated = False
-    while validated == False:
+    while validated is False:
         category = input("Enter the category of the product: ")
         validated = validator("^[A-Za-z]+([\ A-Za-z]+)*", category)
     return category
