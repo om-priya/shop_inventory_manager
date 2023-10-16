@@ -68,3 +68,14 @@ def category_validator():
         category = input("Enter the category of the product: ")
         validated = validator("^[A-Za-z]+([\ A-Za-z]+)*", category)
     return category
+
+
+# Accepted Syntax: <number> (len = 4)
+def year_validator():
+    """Year Validator Function"""
+    year = ""
+    validated = False
+    while validated is False:
+        year = input("Enter the year: ")
+        validated = validator("[0-9]{4}$", year)
+    return year

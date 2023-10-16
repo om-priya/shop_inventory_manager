@@ -12,7 +12,8 @@ def owner_display_menu():
     3> Update Product
     4> Delete Product
     5> Get Product By Name
-    6> Quit App
+    6> Get Sales by Year
+    7> Quit App
     """
     )
 
@@ -23,7 +24,8 @@ def user_display_menu():
         """What do you want to do? (select options)
             1> Show All Product
             2> Get Product By Name
-            3> Quit App
+            3> Buy Product
+            4> Quit App
         """
     )
 

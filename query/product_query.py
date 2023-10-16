@@ -13,7 +13,10 @@ class ProductQuery:
                             (id, name, price, quantity, discount, category, created_date, user_id)
                             VALUES
                             (?,?,?,?,?,?,?,?)"""
-    GET_ALL_PRODUCT = "SELECT * FROM product WHERE user_id = ?"
+    GET_ALL_PRODUCT = "SELECT * FROM product WHERE user_id = (?)"
     FIND_PRODUCT_BY_NAME = "SELECT * FROM product WHERE name = (?) AND user_id = (?)"
     UPDATE_PRODUCT = "UPDATE product SET {} = (?) WHERE name = (?)"
     DELETE_PRODUCT = "DELETE FROM product WHERE name = (?) AND user_id = (?)"
+    UPDATE_PRODUCT_TRANSACTION = (
+        "UPDATE product SET quantity = (?) WHERE user_id = (?) AND id = (?)"
+    )

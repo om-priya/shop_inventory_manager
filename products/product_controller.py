@@ -11,14 +11,15 @@ from query.product_query import ProductQuery
 # To showcase all the products
 @exception_handler
 def show_products(user_id):
+    print(user_id)
     if user_id == "":
         GeneralLogger.warning("Someone Tried to enter the Shop", "users.log")
         print("Ask the Owner to Logged In First Shop is Closed")
         return
     with DatabaseConnection("products.db") as connection:
         cursor = connection.cursor()
-
-        cursor.execute(ProductQuery.GET_ALL_PRODUCT, user_id)
+        params = (user_id,)
+        cursor.execute(ProductQuery.GET_ALL_PRODUCT, params)
 
         products_data = cursor.fetchall()
 
@@ -128,3 +129,12 @@ def delete_product(user_id):
         cursor.execute(ProductQuery.DELETE_PRODUCT, params)
     GeneralLogger.info(f"{name} Deleted Successfully", "products.log")
     print("Product Deleted Successfully")
+
+
+@exception_handler
+def update_productdb(user_id, quantity, productId):
+    with DatabaseConnection("products.db") as connection:
+        cursor = connection.cursor()
+        query = ProductQuery.UPDATE_PRODUCT_TRANSACTION
+        params = (quantity, user_id, productId)
+        cursor.execute(query, params)

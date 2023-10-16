@@ -12,23 +12,21 @@ from products.product import create_product
 from products import product_controller
 from users import user_controller
 from display_menu import owner_display_menu, user_display_menu, prime_display
+from transactions.transaction import Transaction
 
 
 def main():
     """This main function is responsible for running the app"""
 
     print("******* Welcome User *******")
+    logged_in = False
+    user_id = ""
     while True:
         prime_display()
         who_are_you = input("Enter Your Prefereance: ")
 
-        logged_in = False
-        user_id = ""
-
         # Showing Owner Functionality
         if who_are_you == "1":
-            logged_in = False
-            user_id = ""
             while not logged_in:
                 user_request = input("Enter 1 for login and 2 for signup: ")
                 # Checking for logged in usser
@@ -42,7 +40,7 @@ def main():
                     print("Invalid Input/Credentials")
             owner_display_menu()
             owner_input = input("Enter Your Query: ")
-            while owner_input != "6":
+            while owner_input != "7":
                 match owner_input:
                     case "1":
                         create_product(user_id)
@@ -54,6 +52,8 @@ def main():
                         product_controller.delete_product(user_id)
                     case "5":
                         product_controller.get_product_by_name(user_id)
+                    case "6":
+                        Transaction.get_sales(user_id)
                     case _:
                         print("Invalid Input")
                 owner_display_menu()
@@ -64,12 +64,14 @@ def main():
             user_display_menu()
             user_input = input("Enter Your Query: ")
 
-            while user_input != "3":
+            while user_input != "4":
                 match user_input:
                     case "1":
                         product_controller.show_products(user_id)
                     case "2":
                         product_controller.get_product_by_name(user_id)
+                    case "3":
+                        user_controller.buy_product(user_id)
                     case _:
                         print("Invalid Input")
                 user_display_menu()
@@ -85,12 +87,3 @@ def main():
 # Calling Main Function
 if __name__ == "__main__":
     main()
-
-
-# *********** FeedBacks **************
-# 1> Look into the loggers -- Done
-# 2> Try to shift your query to different file and then import it to the file to use it -- Done
-# 3> Learn about Singelton (try to implement it)
-# 4> Check for pylint
-# (By Self)
-# 5> Make Query Safe some inner checks as well -- Done

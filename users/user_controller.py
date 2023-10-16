@@ -1,4 +1,6 @@
 import maskpass
+import shortuuid
+from datetime import datetime
 from users.user import ShopOwner
 import validators.user_validator
 from database import DatabaseConnection
@@ -6,6 +8,9 @@ from exception_handler.sql_exception_handler import exception_handler
 from encryption.encryption import *
 from loggers.general_logger import GeneralLogger
 from query.user_query import UserQuery
+from products import product_controller
+from validators import product_validator
+from transactions.transaction import Transaction
 
 # ***** To Generate Key For Encryption *****
 # key = Fernet.generate_key()
@@ -53,3 +58,50 @@ def signup():
     new_owner = ShopOwner(owner_object)
     new_owner.save_user()
     print("Owner Created SuccessFully You Can Log In Now")
+
+@exception_handler
+def buy_product(user_id):
+    product_controller.show_products(user_id)
+    user_req = input("Do you want to buy? (yes/no) ").lower().strip()
+    user_order = []
+    while user_req == "yes":
+        name = input("Enter thw name of the product you want to buy: ").lower().strip()
+        product = product_controller.find_product(name, user_id)
+        if not product:
+            print("Product not Found")
+        else:
+            req_quantity = int(product_validator.quantity_validator())
+            while req_quantity > product[0][3]:
+                print(f"Enter quantitiy less than or equal to {product[0][3]}")
+                req_quantity = int(product_validator.quantity_validator())
+        today = datetime.now()
+        initial_quantity = int(product[0][3])
+        order_tuple = (
+            shortuuid.ShortUUID().random(length=8),  # tid
+            product[0][0],  # pid
+            user_id,  # ownerid
+            req_quantity,  # quantity
+            req_quantity * product[0][2],  # amount
+            today.strftime("%Y"),  # year
+            today.strftime("%B"),  # month
+        )
+        user_order.append(order_tuple)
+        user_req = input("Do you want to buy more? (yes/no) ").lower().strip()
+
+    final_req = input("Do you want to proceed with billing? (yes/no) ").lower().strip()
+    while final_req != "yes" and final_req != "no":
+        print("Enter either yes or no")
+        final_req = (
+            input("Do you want to proceed with billing? (yes/no)").lower().strip()
+        )
+
+    if final_req == "no":
+        print("You just cancel your request !!")
+        return
+
+    # update product db
+    for order in user_order:
+        product_controller.update_productdb(user_id, initial_quantity - order[3], order[1])
+        Transaction.save_info(order)
+
+    print("Thank You For Shopping Do visit us Again ")
