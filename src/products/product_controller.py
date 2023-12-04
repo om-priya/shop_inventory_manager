@@ -1,11 +1,14 @@
 from datetime import datetime
 from tabulate import tabulate
 
-from database import DatabaseConnection
-from validators import product_validator
-from exception_handler.sql_exception_handler import exception_handler
-from loggers.general_logger import GeneralLogger
-from query.product_query import ProductQuery
+from database.database_connector import DatabaseConnection
+from utils import product_validator
+from utils.sql_exception_handler import exception_handler
+import logging
+from config.product_query import ProductQuery
+from config.prompt_message import PromptMessage
+
+logger = logging.getLogger(__name__)
 
 
 # To showcase all the products
@@ -13,10 +16,10 @@ from query.product_query import ProductQuery
 def show_products(user_id):
     print(user_id)
     if user_id == "":
-        GeneralLogger.warning("Someone Tried to enter the Shop", "users.log")
-        print("Ask the Owner to Logged In First Shop is Closed")
+        logger.warning("Someone Tried to enter the Shop", "users.log")
+        print(PromptMessage.ASK_OWNER_TO_LOG_IN)
         return
-    with DatabaseConnection("products.db") as connection:
+    with DatabaseConnection("store.db") as connection:
         cursor = connection.cursor()
         params = (user_id,)
         cursor.execute(ProductQuery.GET_ALL_PRODUCT, params)
@@ -30,10 +33,10 @@ def show_products(user_id):
 @exception_handler
 def find_product(name, user_id):
     if user_id == "":
-        GeneralLogger.warning("Someone Tried to enter the Shop", "users.log")
-        print("Ask the Owner to Logged In First Shop is Closed")
+        logger.warning("Someone Tried to enter the Shop", "users.log")
+        print(PromptMessage.ASK_OWNER_TO_LOG_IN)
         return
-    with DatabaseConnection("products.db") as connection:
+    with DatabaseConnection("store.db") as connection:
         cursor = connection.cursor()
         params = (name.lower(), user_id.strip())
         cursor.execute(ProductQuery.FIND_PRODUCT_BY_NAME, params)
@@ -43,11 +46,11 @@ def find_product(name, user_id):
 
 # To get product by name
 def get_product_by_name(user_id):
-    name = input("Enter the product name: ")
+    name = input(PromptMessage.PROMPT_PRODUCT_MESSAGE.format("name"))
     product = find_product(name, user_id)
     if not product:
-        GeneralLogger.info(f"{name} Product Not Found", "products.log")
-        print("Product Not Found")
+        logger.info(f"{name} Product Not Found", "products.log")
+        print(PromptMessage.NOT_FOUND.format("Product"))
     else:
         print(tabulate(product))
 
@@ -68,23 +71,23 @@ def helper(data):
 @exception_handler
 def update_product(user_id):
     # Take the name of the product
-    name = input("Enter the name of product you want to be upgraded: ").lower()
+    name = input(PromptMessage.UPDATE_PRODUCT_FIELD.format("name")).lower()
 
     # Check for it's existence
     product = find_product(name, user_id)
     if not product:
-        GeneralLogger.info(f"{name} Product Not Found", "products.log")
-        print("Product Not Found")
+        logger.info(f"{name} Product Not Found", "products.log")
+        print(PromptMessage.NOT_FOUND.format("Product"))
         return
 
     # Taking field input and validating it
-    updated_field = input("Enter the field You want to update: ").lower()
+    updated_field = input(PromptMessage.UPDATE_PRODUCT_FIELD.format("field")).lower()
     while True:
         if helper(updated_field):
             break
-        GeneralLogger.info("Invalid Input For Field", "products.log")
-        print("Invalid Input")
-        updated_field = input("Enter the field You want to update").lower()
+        logger.info("Invalid Input For Field", "products.log")
+        print(PromptMessage.INVALID_INPUT)
+        updated_field = input(PromptMessage.UPDATE_PRODUCT_FIELD.format("field")).lower()
 
     # Calling function according to the updated_field
     value = None
@@ -101,7 +104,7 @@ def update_product(user_id):
             value = product_validator.category_validator()
 
     # Setting new value to the db
-    with DatabaseConnection("products.db") as connection:
+    with DatabaseConnection("store.db") as connection:
         cursor = connection.cursor()
         str(datetime.now().strftime("%d-%m-%Y"))
         cursor.execute(
@@ -110,30 +113,30 @@ def update_product(user_id):
             ),
             (value, name),
         )
-        GeneralLogger.info(f"Rows Updated Successfully for {name}", "products.log")
-        print("Rows Updated Successfully")
+        logger.info(f"Rows Updated Successfully for {name}", "products.log")
+        print(PromptMessage.UPDATE_ACTION.format("Rows"))
 
 
 # Delete Product (only owner can perform)
 @exception_handler
 def delete_product(user_id):
-    name = input("Enter the name the product you want to delete: ")
+    name = input(PromptMessage.DELETE_PRODUCT_PROMPT.format("name"))
     product = find_product(name, user_id)
     if not product:
-        GeneralLogger.info(f"{name} Product Not Found", "products.log")
-        print("Product Not Found")
+        logger.info(f"{name} Product Not Found", "products.log")
+        print(PromptMessage.NOT_FOUND.format("Product"))
         return
-    with DatabaseConnection("products.db") as connection:
+    with DatabaseConnection("store.db") as connection:
         cursor = connection.cursor()
         params = (name.lower(), user_id.strip())
         cursor.execute(ProductQuery.DELETE_PRODUCT, params)
-    GeneralLogger.info(f"{name} Deleted Successfully", "products.log")
-    print("Product Deleted Successfully")
+    logger.info(f"{name} Deleted Successfully", "products.log")
+    print(PromptMessage.DELETED_ACTION.format("Product"))
 
 
 @exception_handler
 def update_productdb(user_id, quantity, productId):
-    with DatabaseConnection("products.db") as connection:
+    with DatabaseConnection("store.db") as connection:
         cursor = connection.cursor()
         query = ProductQuery.UPDATE_PRODUCT_TRANSACTION
         params = (quantity, user_id, productId)

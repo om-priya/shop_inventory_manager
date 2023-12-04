@@ -1,7 +1,9 @@
 """This Module is responsible for handling all the functions related to encryption and decryption"""
 
 from cryptography.fernet import Fernet
-from loggers.general_logger import GeneralLogger
+import logging
+
+logger = logging.getLogger(__name__)
 
 try:
     # To get the key stored in .key file
@@ -27,4 +29,4 @@ try:
         return plain_pass
 
 except Exception:
-    GeneralLogger.critical("Something Wrong with Encryption", "users.log")
+    logger.critical("Something Wrong with Encryption", "users.log")

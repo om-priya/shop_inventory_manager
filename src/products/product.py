@@ -1,15 +1,18 @@
 import shortuuid
+import logging
 from datetime import datetime
-from validators.product_validator import (
+from utils.product_validator import (
     name_validator,
     price_validator,
     quantity_validator,
     discount_validator,
     category_validator,
 )
-from database import DatabaseConnection
-from loggers.general_logger import GeneralLogger
-from query.product_query import ProductQuery
+from database.database_connector import DatabaseConnection
+from config.product_query import ProductQuery
+from config.prompt_message import PromptMessage
+
+logger = logging.getLogger(__name__)
 
 
 class Products:
@@ -26,7 +29,7 @@ class Products:
 
         # Saving Product to File
         def save_product(self):
-            with DatabaseConnection("products.db") as connection:
+            with DatabaseConnection("store.db") as connection:
                 cursor = connection.cursor()
                 cursor.execute(ProductQuery.CREATE_PRODUCT_TABLE)
                 query = ProductQuery.INSERT_PRODUCT_QUERY
@@ -43,8 +46,8 @@ class Products:
                 cursor.execute(query, data_tuple)
 
     except Exception:
-        print("Something Went Wrong")
-        GeneralLogger.error("Something Went Wrong With Inserting Rows", "products.log")
+        print(PromptMessage.EXCEPTION_PROMPT_MESSAGE)
+        logger.error("Something Went Wrong With Inserting Rows", "products.log")
 
 
 # Create Product Object and Save to txt file
@@ -60,4 +63,4 @@ def create_product(user_id):
 
     new_product = Products(product_obj)
     new_product.save_product()
-    print("Product Added Succesfully!!!")
+    print(PromptMessage.SUCCESS_ACTION.format("Product"))

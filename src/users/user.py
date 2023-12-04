@@ -1,8 +1,11 @@
 import shortuuid
 
-from database import DatabaseConnection
-from loggers.general_logger import GeneralLogger
-from query.user_query import UserQuery
+from database.database_connector import DatabaseConnection
+import logging
+from config.user_query import UserQuery
+from config.prompt_message import PromptMessage
+
+logger = logging.getLogger(__name__)
 
 
 # Human Class
@@ -17,7 +20,7 @@ class Human:
 
     except Exception:
         print(Exception.__name__)
-        print("Something Went Wrong Try Again !!")
+        print(PromptMessage.EXCEPTION_PROMPT_MESSAGE)
 
 
 # Owner Class inheriting human
@@ -53,5 +56,5 @@ class ShopOwner(Human):
                 cursor.execute(UserQuery.INSERT_USER_DATA, data_tuple)
 
     except Exception:
-        GeneralLogger.error("Unable to Insert Data", "users.log")
-        print("Something Went Wrong Try Again !!")
+        logger.error("Unable to Insert Data", "users.log")
+        print(PromptMessage.EXCEPTION_PROMPT_MESSAGE)

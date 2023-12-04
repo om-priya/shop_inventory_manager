@@ -13,22 +13,30 @@ from products import product_controller
 from users import user_controller
 from display_menu import owner_display_menu, user_display_menu, prime_display
 from transactions.transaction import Transaction
+from config.prompt_message import PromptMessage
+import logging
+
+logging.basicConfig(
+    format="%(asctime)s %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s",
+    level=logging.DEBUG,
+    filename="logs.log",
+)
 
 
 def main():
     """This main function is responsible for running the app"""
 
-    print("******* Welcome User *******")
+    print(PromptMessage.WELCOME_MESSAGE)
     logged_in = False
     user_id = ""
     while True:
         prime_display()
-        who_are_you = input("Enter Your Prefereance: ")
+        who_are_you = input(PromptMessage.YOUR_PREFERENCE)
 
         # Showing Owner Functionality
         if who_are_you == "1":
             while not logged_in:
-                user_request = input("Enter 1 for login and 2 for signup: ")
+                user_request = input(PromptMessage.LOGIN_SIGNUP_PROMPT)
                 # Checking for logged in usser
                 if user_request == "1":
                     logged_in, user_id = user_controller.check_login()
@@ -37,9 +45,9 @@ def main():
                     user_controller.signup()
                     logged_in, user_id = user_controller.check_login()
                 else:
-                    print("Invalid Input/Credentials")
+                    print(PromptMessage.INVALID_INPUT_CREDENTIALS)
             owner_display_menu()
-            owner_input = input("Enter Your Query: ")
+            owner_input = input(PromptMessage.ENTER_QUERY)
             while owner_input != "7":
                 match owner_input:
                     case "1":
@@ -55,14 +63,14 @@ def main():
                     case "6":
                         Transaction.get_sales(user_id)
                     case _:
-                        print("Invalid Input")
+                        print(PromptMessage.INVALID_INPUT)
                 owner_display_menu()
-                owner_input = input("Enter Your Query: ")
+                owner_input = input(PromptMessage.ENTER_QUERY)
 
         # Showing User Functionality
         elif who_are_you == "2":
             user_display_menu()
-            user_input = input("Enter Your Query: ")
+            user_input = input(PromptMessage.ENTER_QUERY)
 
             while user_input != "4":
                 match user_input:
@@ -73,15 +81,15 @@ def main():
                     case "3":
                         user_controller.buy_product(user_id)
                     case _:
-                        print("Invalid Input")
+                        print(PromptMessage.INVALID_INPUT)
                 user_display_menu()
-                user_input = input("Enter Your Query: ")
+                user_input = input(PromptMessage.ENTER_QUERY)
 
         elif who_are_you == "3":
             sys.exit()
 
         else:
-            print("Please enter correct prompt")
+            print(PromptMessage.WRONG_PROMPT)
 
 
 # Calling Main Function

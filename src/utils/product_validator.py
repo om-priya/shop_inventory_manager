@@ -1,7 +1,10 @@
 """This module is resp"""
 import re
-from exception_handler.validation_exception import validation_exception
-from loggers.general_logger import GeneralLogger
+from utils.validation_exception import validation_exception
+import logging
+from config.prompt_message import PromptMessage
+
+logger = logging.getLogger(__name__)
 
 
 # validator for all the fields
@@ -10,7 +13,7 @@ def validator(pattern, input_data):
     """General Validator which return either True or False"""
     x = re.search(pattern, input_data)
     if x is None:
-        GeneralLogger.warning("Invalid Input", "products.log")
+        logger.warning("Invalid Input", "products.log")
         return False
     return True
 
@@ -21,7 +24,7 @@ def name_validator():
     name = ""
     validated = False
     while validated is False:
-        name = input("Enter the name of the product: ")
+        name = input(PromptMessage.PROMPT_PRODUCT_MESSAGE.format("name"))
         validated = validator("^[A-Za-z]+([\ A-Za-z]+)*", name)
     return name
 
@@ -32,7 +35,7 @@ def price_validator():
     price = ""
     validated = False
     while validated is False:
-        price = input("Enter the price of the product: ")
+        price = input(PromptMessage.PROMPT_PRODUCT_MESSAGE.format("price"))
         validated = validator("[0-9]*[.][0-9]*", price)
     return price
 
@@ -43,7 +46,7 @@ def quantity_validator():
     quantity = ""
     validated = False
     while validated is False:
-        quantity = input("Enter the quantity of the product: ")
+        quantity = input(PromptMessage.PROMPT_PRODUCT_MESSAGE.format("quantity"))
         validated = validator("\d+", quantity)
     return quantity
 
@@ -54,7 +57,7 @@ def discount_validator():
     discount = ""
     validated = False
     while validated is False:
-        discount = input("Enter the discount of the product: ")
+        discount = input(PromptMessage.PROMPT_PRODUCT_MESSAGE.format("discount"))
         validated = validator("[0-9]*[.][0-9]*", discount)
     return discount
 
@@ -65,7 +68,7 @@ def category_validator():
     category = ""
     validated = False
     while validated is False:
-        category = input("Enter the category of the product: ")
+        category = input(PromptMessage.PROMPT_PRODUCT_MESSAGE.format("category"))
         validated = validator("^[A-Za-z]+([\ A-Za-z]+)*", category)
     return category
 
@@ -76,6 +79,6 @@ def year_validator():
     year = ""
     validated = False
     while validated is False:
-        year = input("Enter the year: ")
+        year = input(PromptMessage.YEAR_INPUT_PROMPT)
         validated = validator("[0-9]{4}$", year)
     return year

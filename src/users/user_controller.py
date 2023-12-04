@@ -2,14 +2,14 @@ import maskpass
 import shortuuid
 from datetime import datetime
 from users.user import ShopOwner
-import validators.user_validator
-from database import DatabaseConnection
-from exception_handler.sql_exception_handler import exception_handler
-from encryption.encryption import *
-from loggers.general_logger import GeneralLogger
-from query.user_query import UserQuery
+from utils import user_validator
+from database.database_connector import DatabaseConnection
+from utils.sql_exception_handler import exception_handler
+from utils.encryption import *
+import logging
+from config.user_query import UserQuery
 from products import product_controller
-from validators import product_validator
+from utils import product_validator
 from transactions.transaction import Transaction
 
 # ***** To Generate Key For Encryption *****
@@ -18,13 +18,14 @@ from transactions.transaction import Transaction
 #     file_key.write(key)
 
 
+logger = logging.getLogger(__name__)
 # Check For Login Users
 @exception_handler
 def check_login():
     email = input("Enter Your Email: ")
     entered_password = maskpass.advpass()
 
-    with DatabaseConnection("users.db") as connection:
+    with DatabaseConnection("store.db") as connection:
         cursor = connection.cursor()
         params = (email,)
         cursor.execute(UserQuery.LOGIN_QUERY, params)
@@ -37,27 +38,26 @@ def check_login():
     byte_enter_pass = bytes(entered_password, "utf-8")
     if byte_enter_pass == db_password:
         return [True, user_id]
-    GeneralLogger.info("Unsuccessfull Login", "users.log")
+    logger.info("Unsuccessfull Login")
     return [False, ""]
 
 
-# Creating Owner Object and encrypting password and storing it in users.db
+# Creating Owner Object and encrypting password and storing it in store.db
 @exception_handler
 def signup():
     owner_object = {}
-    owner_object["name"] = validators.user_validator.name_validator().lower()
-    owner_object["email"] = validators.user_validator.email_validator().lower()
-    owner_object["phone"] = validators.user_validator.phone_validator()
-    owner_object["gender"] = validators.user_validator.gender_validator().upper()
+    owner_object["name"] = user_validator.name_validator().lower()
+    owner_object["email"] = user_validator.email_validator().lower()
+    owner_object["phone"] = user_validator.phone_validator()
+    owner_object["gender"] = user_validator.gender_validator().upper()
     owner_object["role"] = "owner"
-    owner_object["shop_name"] = validators.user_validator.shop_validator().lower()
-    owner_object["password"] = encrypt_password(
-        validators.user_validator.password_validator()
-    )
+    owner_object["shop_name"] = user_validator.shop_validator().lower()
+    owner_object["password"] = encrypt_password(user_validator.password_validator())
 
     new_owner = ShopOwner(owner_object)
     new_owner.save_user()
     print("Owner Created SuccessFully You Can Log In Now")
+
 
 @exception_handler
 def buy_product(user_id):
@@ -101,7 +101,9 @@ def buy_product(user_id):
 
     # update product db
     for order in user_order:
-        product_controller.update_productdb(user_id, initial_quantity - order[3], order[1])
+        product_controller.update_productdb(
+            user_id, initial_quantity - order[3], order[1]
+        )
         Transaction.save_info(order)
 
     print("Thank You For Shopping Do visit us Again ")

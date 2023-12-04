@@ -1,15 +1,18 @@
 import re
 import maskpass
-from exception_handler.validation_exception import validation_exception
-from loggers.general_logger import GeneralLogger
+from utils.validation_exception import validation_exception
+import logging
+from config.prompt_message import PromptMessage
+
+logger = logging.getLogger(__name__)
 
 
 @validation_exception
 def validator(pattern, input_data):
     x = re.search(pattern, input_data)
     if x == None:
-        GeneralLogger.warning("Invalid Input", "users.log")
-        print("Invalid Input")
+        logger.warning("Invalid Input", "users.log")
+        print(PromptMessage.INVALID_INPUT)
         return False
     return True
 
@@ -19,7 +22,7 @@ def name_validator():
     validated = False
     name = ""
     while validated == False:
-        name = input("Enter the name of the user: ")
+        name = input(PromptMessage.PROMPT_USER_MESSAGE.format("name"))
         validated = validator("^[A-Za-z]+([\ A-Za-z]+)*", name)
     return name
 
@@ -29,7 +32,7 @@ def email_validator():
     validated = False
     email = ""
     while validated == False:
-        email = input("Enter the email of the user: ")
+        email = input(PromptMessage.PROMPT_USER_MESSAGE.format("email"))
         validated = validator("[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}", email)
     return email
 
@@ -39,7 +42,7 @@ def gender_validator():
     gender = ""
     validated = False
     while validated == False:
-        gender = input("Enter gender of user (M/F): ").upper()
+        gender = input(PromptMessage.PROMPT_USER_MESSAGE.format("gender")).upper()
         validated = validator("[M,F]{1}$", gender)
     return gender
 
@@ -49,7 +52,7 @@ def phone_validator():
     phone_no = ""
     validated = False
     while validated == False:
-        phone_no = input("Enter the phone_no of the user: ")
+        phone_no = input(PromptMessage.PROMPT_USER_MESSAGE.format("Phone Number"))
         validated = validator("^[0-9]{10}$", phone_no)
     return phone_no
 
@@ -59,7 +62,7 @@ def shop_validator():
     shop = ""
     validated = False
     while validated == False:
-        shop = input("Enter the Shop Name: ")
+        shop = input(PromptMessage.SHOP_NAME_PROMPT)
         validated = validator("^[A-Za-z]+([\ A-Za-z]+)*", shop)
     return shop
 
