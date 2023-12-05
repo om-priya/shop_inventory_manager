@@ -19,6 +19,8 @@ from transactions.transaction import Transaction
 
 
 logger = logging.getLogger(__name__)
+
+
 # Check For Login Users
 @exception_handler
 def check_login():
@@ -101,7 +103,7 @@ def buy_product(user_id):
 
     # update product db
     for order in user_order:
-        product_controller.update_productdb(
+        product_controller.update_product_quantity(
             user_id, initial_quantity - order[3], order[1]
         )
         Transaction.save_info(order)

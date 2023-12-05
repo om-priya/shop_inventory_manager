@@ -1,4 +1,5 @@
 from database.database_connector import DatabaseConnection
+from database.db_access import DbAccess as DAO
 from config.transaction_query import TransactionQuery
 from utils.product_validator import year_validator
 from utils.sql_exception_handler import exception_handler
@@ -17,9 +18,6 @@ class Transaction:
     @staticmethod
     def get_sales(user_id):
         year = int(year_validator())
-        with DatabaseConnection("store.db") as connection:
-            cursor = connection.cursor()
-            params = (user_id, year)
-            cursor.execute(TransactionQuery.GET_SALES, params)
-            sales_amount = cursor.fetchone()
-            print(f"The sales for the year {year} is {sales_amount[0]}")
+        params = (user_id, year)
+        sales_amount = DAO.read_from_database(TransactionQuery.GET_SALES, params)
+        print(f"The sales for the year {year} is {sales_amount[0][0]}")

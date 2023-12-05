@@ -1,7 +1,7 @@
 from datetime import datetime
 from tabulate import tabulate
 
-from database.database_connector import DatabaseConnection
+from database.db_access import DbAccess as DAO
 from utils import product_validator
 from utils.sql_exception_handler import exception_handler
 import logging
@@ -19,12 +19,7 @@ def show_products(user_id):
         logger.warning("Someone Tried to enter the Shop", "users.log")
         print(PromptMessage.ASK_OWNER_TO_LOG_IN)
         return
-    with DatabaseConnection("store.db") as connection:
-        cursor = connection.cursor()
-        params = (user_id,)
-        cursor.execute(ProductQuery.GET_ALL_PRODUCT, params)
-
-        products_data = cursor.fetchall()
+    products_data = DAO.read_from_database(ProductQuery.GET_ALL_PRODUCT, (user_id,))
 
     print(tabulate(products_data))
 
@@ -36,11 +31,10 @@ def find_product(name, user_id):
         logger.warning("Someone Tried to enter the Shop", "users.log")
         print(PromptMessage.ASK_OWNER_TO_LOG_IN)
         return
-    with DatabaseConnection("store.db") as connection:
-        cursor = connection.cursor()
-        params = (name.lower(), user_id.strip())
-        cursor.execute(ProductQuery.FIND_PRODUCT_BY_NAME, params)
-        product = cursor.fetchall()
+
+    params = (name.lower(), user_id.strip())
+    product = DAO.read_from_database(ProductQuery.FIND_PRODUCT_BY_NAME, params)
+
     return product
 
 
@@ -87,7 +81,9 @@ def update_product(user_id):
             break
         logger.info("Invalid Input For Field", "products.log")
         print(PromptMessage.INVALID_INPUT)
-        updated_field = input(PromptMessage.UPDATE_PRODUCT_FIELD.format("field")).lower()
+        updated_field = input(
+            PromptMessage.UPDATE_PRODUCT_FIELD.format("field")
+        ).lower()
 
     # Calling function according to the updated_field
     value = None
@@ -104,17 +100,14 @@ def update_product(user_id):
             value = product_validator.category_validator()
 
     # Setting new value to the db
-    with DatabaseConnection("store.db") as connection:
-        cursor = connection.cursor()
-        str(datetime.now().strftime("%d-%m-%Y"))
-        cursor.execute(
-            ProductQuery.UPDATE_PRODUCT.format(
-                updated_field,
-            ),
-            (value, name),
-        )
-        logger.info(f"Rows Updated Successfully for {name}", "products.log")
-        print(PromptMessage.UPDATE_ACTION.format("Rows"))
+    DAO.write_to_database(
+        ProductQuery.UPDATE_PRODUCT.format(
+            updated_field,
+        ),
+        (value, name),
+    )
+    logger.info(f"Rows Updated Successfully for {name}", "products.log")
+    print(PromptMessage.UPDATE_ACTION.format("Rows"))
 
 
 # Delete Product (only owner can perform)
@@ -126,18 +119,13 @@ def delete_product(user_id):
         logger.info(f"{name} Product Not Found", "products.log")
         print(PromptMessage.NOT_FOUND.format("Product"))
         return
-    with DatabaseConnection("store.db") as connection:
-        cursor = connection.cursor()
-        params = (name.lower(), user_id.strip())
-        cursor.execute(ProductQuery.DELETE_PRODUCT, params)
+    params = (name.lower(), user_id.strip())
+    DAO.write_to_database(ProductQuery.DELETE_PRODUCT, params)
     logger.info(f"{name} Deleted Successfully", "products.log")
     print(PromptMessage.DELETED_ACTION.format("Product"))
 
 
 @exception_handler
-def update_productdb(user_id, quantity, productId):
-    with DatabaseConnection("store.db") as connection:
-        cursor = connection.cursor()
-        query = ProductQuery.UPDATE_PRODUCT_TRANSACTION
-        params = (quantity, user_id, productId)
-        cursor.execute(query, params)
+def update_product_quantity(user_id, quantity, productId):
+    params = (quantity, user_id, productId)
+    DAO.write_to_database(ProductQuery.UPDATE_PRODUCT_TRANSACTION, params)
