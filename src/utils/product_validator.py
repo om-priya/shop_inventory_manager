@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 @validation_exception
 def validator(pattern, input_data):
     """General Validator which return either True or False"""
-    x = re.search(pattern, input_data)
+    x = re.fullmatch(pattern, input_data)
     if x is None:
         logger.warning("Invalid Input", "products.log")
         return False

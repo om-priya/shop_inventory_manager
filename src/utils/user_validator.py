@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 @validation_exception
 def validator(pattern, input_data):
-    x = re.search(pattern, input_data)
+    x = re.fullmatc(pattern, input_data)
     if x == None:
         logger.warning("Invalid Input", "users.log")
         print(PromptMessage.INVALID_INPUT)

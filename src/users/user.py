@@ -40,7 +40,8 @@ class ShopOwner(Human):
 
         # saving users to user-file
         def save_user(self):
-            with DatabaseConnection("users.db") as connection:
+            print(DatabaseConnection)
+            with DatabaseConnection("store.db") as connection:
                 cursor = connection.cursor()
                 cursor.execute(UserQuery.CREATE_USER_TABLE)
                 data_tuple = (
