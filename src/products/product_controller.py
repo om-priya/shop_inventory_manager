@@ -14,10 +14,9 @@ logger = logging.getLogger(__name__)
 # To showcase all the products
 @exception_handler
 def show_products(user_id):
-    print(user_id)
     if user_id == "":
-        logger.warning("Someone Tried to enter the Shop", "users.log")
         print(PromptMessage.ASK_OWNER_TO_LOG_IN)
+        logger.info("Someone Tried to enter the Shop", "users.log")
         return
     products_data = DAO.read_from_database(ProductQuery.GET_ALL_PRODUCT, (user_id,))
 
@@ -28,8 +27,8 @@ def show_products(user_id):
 @exception_handler
 def find_product(name, user_id):
     if user_id == "":
-        logger.warning("Someone Tried to enter the Shop", "users.log")
         print(PromptMessage.ASK_OWNER_TO_LOG_IN)
+        logger.info("Someone Tried to enter the Shop", "users.log")
         return
 
     params = (name.lower(), user_id.strip())

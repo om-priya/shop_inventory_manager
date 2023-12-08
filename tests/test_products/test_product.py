@@ -1,4 +1,4 @@
-from products.product import Products
+from products.product import Products, create_product
 from database.database_connector import DatabaseConnection
 from unittest.mock import MagicMock
 from unittest import mock
@@ -29,3 +29,24 @@ class TestProducts:
             self.test_dummy_product_obj.save_product()
 
             assert mock_cursor.execute.call_count == 2
+
+    @mock.patch("products.product.Products.save_product", return_value="Saved")
+    @mock.patch("products.product.category_validator", return_value="beverages")
+    @mock.patch("products.product.discount_validator", return_value="2.00")
+    @mock.patch("products.product.quantity_validator", return_value="23")
+    @mock.patch("products.product.price_validator", return_value="12.00")
+    @mock.patch("products.product.name_validator", return_value="OMPRIYA")
+    def test_create_product(
+        self,
+        mock_name,
+        mock_price,
+        mock_quantity,
+        mock_discount,
+        mock_category,
+        mock_save_product,
+        capsys,
+    ):
+        create_product("")
+        captured = capsys.readouterr()
+
+        assert "Product ADDED SUCCESSFULLY" in captured.out
