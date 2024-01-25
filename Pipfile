@@ -4,6 +4,15 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+flask = "*"
+tabulate = "*"
+shortuuid = "*"
+maskpass = "*"
+cryptography = "*"
+python-dotenv = "*"
+flask-smorest = "*"
+marshmallow = "*"
+flask-jwt-extended = "*"
 
 [dev-packages]
 

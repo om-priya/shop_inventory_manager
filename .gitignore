@@ -3,5 +3,5 @@ __pycache__
 encrypt_key.key
 users.log
 products.log
-users.db
-products.db
+store.db
+.flaskenv

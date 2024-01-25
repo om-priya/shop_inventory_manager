@@ -14,9 +14,11 @@ class ProductQuery:
                             VALUES
                             (?,?,?,?,?,?,?,?)"""
     GET_ALL_PRODUCT = "SELECT * FROM product WHERE user_id = (?)"
-    FIND_PRODUCT_BY_NAME = "SELECT * FROM product WHERE name = (?) AND user_id = (?)"
-    UPDATE_PRODUCT = "UPDATE product SET {} = (?) WHERE name = (?)"
-    DELETE_PRODUCT = "DELETE FROM product WHERE name = (?) AND user_id = (?)"
+    FIND_PRODUCT_BY_ID = "SELECT * FROM product WHERE id = (?) AND user_id = (?)"
+    UPDATE_PRODUCT = "UPDATE product SET name = (?), price = (?), quantity = (?), discount = (?), category = (?) WHERE id = (?) AND user_id = (?)"
+    DELETE_PRODUCT = "DELETE FROM product WHERE id = (?) AND user_id = (?)"
     UPDATE_PRODUCT_TRANSACTION = (
         "UPDATE product SET quantity = (?) WHERE user_id = (?) AND id = (?)"
     )
+    FETCH_ALL_PRODUCT = "SELECT p.id, p.name, p.price, p.quantity, u.shop_name FROM product as p JOIN user as u ON p.user_id = u.Id"
+    FETCH_SINGLE_PRODUCT = "SELECT * FROM product WHERE id = (?)"

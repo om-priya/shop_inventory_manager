@@ -25,37 +25,30 @@ class Human:
 
 # Owner Class inheriting human
 class ShopOwner(Human):
-    try:
+    def __init__(self, owner_obj):
+        super().__init__(
+            owner_obj["name"],
+            owner_obj["email"],
+            owner_obj["phone"],
+            owner_obj["gender"],
+        )
+        self.role = owner_obj["role"]
+        self.shop_name = owner_obj["shop_name"]
+        self.password = owner_obj["password"]
 
-        def __init__(self, owner_obj):
-            super().__init__(
-                owner_obj["name"],
-                owner_obj["email"],
-                owner_obj["phone"],
-                owner_obj["gender"],
+    # saving users to user-file
+    def save_user(self):
+        with DatabaseConnection("store.db") as connection:
+            cursor = connection.cursor()
+            cursor.execute(UserQuery.CREATE_USER_TABLE)
+            data_tuple = (
+                shortuuid.ShortUUID().random(length=8),
+                self.name,
+                self.email,
+                self.phone,
+                self.gender,
+                self.role,
+                self.shop_name,
+                self.password,
             )
-            self.role = owner_obj["role"]
-            self.shop_name = owner_obj["shop_name"]
-            self.password = owner_obj["password"]
-
-        # saving users to user-file
-        def save_user(self):
-            print(DatabaseConnection)
-            with DatabaseConnection("store.db") as connection:
-                cursor = connection.cursor()
-                cursor.execute(UserQuery.CREATE_USER_TABLE)
-                data_tuple = (
-                    shortuuid.ShortUUID().random(length=8),
-                    self.name,
-                    self.email,
-                    self.phone,
-                    self.gender,
-                    self.role,
-                    self.shop_name,
-                    self.password,
-                )
-                cursor.execute(UserQuery.INSERT_USER_DATA, data_tuple)
-
-    except Exception:
-        logger.error("Unable to Insert Data", "users.log")
-        print(PromptMessage.EXCEPTION_PROMPT_MESSAGE)
+            cursor.execute(UserQuery.INSERT_USER_DATA, data_tuple)

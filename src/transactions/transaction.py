@@ -14,10 +14,8 @@ class Transaction:
             cursor.execute(TransactionQuery.CREATE_TABLE)
             cursor.execute(TransactionQuery.SAVE_INFO, order_details)
 
-    @exception_handler
     @staticmethod
-    def get_sales(user_id):
-        year = int(year_validator())
+    def get_sales(user_id, year):
         params = (user_id, year)
         sales_amount = DAO.read_from_database(TransactionQuery.GET_SALES, params)
-        print(f"The sales for the year {year} is {sales_amount[0][0]}")
+        return sales_amount

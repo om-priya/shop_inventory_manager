@@ -16,6 +16,8 @@ from transactions.transaction import Transaction
 from config.prompt_message import PromptMessage
 import logging
 
+from controller import user_controller as u
+
 logging.basicConfig(
     format="%(asctime)s %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s",
     level=logging.DEBUG,
@@ -75,9 +77,9 @@ def main():
             while user_input != "4":
                 match user_input:
                     case "1":
-                        product_controller.show_products(user_id)
+                        u.show_products()
                     case "2":
-                        product_controller.get_product_by_name(user_id)
+                        u.get_product_by_name()
                     case "3":
                         user_controller.buy_product(user_id)
                     case _:

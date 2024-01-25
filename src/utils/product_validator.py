@@ -13,7 +13,7 @@ def validator(pattern, input_data):
     """General Validator which return either True or False"""
     x = re.fullmatch(pattern, input_data)
     if x is None:
-        logger.warning("Invalid Input", "products.log")
+        logger.warning("Invalid Input")
         return False
     return True
 
@@ -25,7 +25,7 @@ def name_validator():
     validated = False
     while validated is False:
         name = input(PromptMessage.PROMPT_PRODUCT_MESSAGE.format("name"))
-        validated = validator("^[A-Za-z]+([\ A-Za-z]+)*", name)
+        validated = validator(r"^[A-Za-z]+([\ A-Za-z]+)*", name)
     return name
 
 
@@ -36,7 +36,7 @@ def price_validator():
     validated = False
     while validated is False:
         price = input(PromptMessage.PROMPT_PRODUCT_MESSAGE.format("price"))
-        validated = validator("[0-9]*[.][0-9]*", price)
+        validated = validator(r"[0-9]*[.][0-9]*", price)
     return price
 
 
@@ -47,7 +47,7 @@ def quantity_validator():
     validated = False
     while validated is False:
         quantity = input(PromptMessage.PROMPT_PRODUCT_MESSAGE.format("quantity"))
-        validated = validator("\d+", quantity)
+        validated = validator(r"\d+", quantity)
     return quantity
 
 
@@ -58,7 +58,7 @@ def discount_validator():
     validated = False
     while validated is False:
         discount = input(PromptMessage.PROMPT_PRODUCT_MESSAGE.format("discount"))
-        validated = validator("[0-9]*[.][0-9]*", discount)
+        validated = validator(r"[0-9]*[.][0-9]*", discount)
     return discount
 
 
@@ -69,7 +69,7 @@ def category_validator():
     validated = False
     while validated is False:
         category = input(PromptMessage.PROMPT_PRODUCT_MESSAGE.format("category"))
-        validated = validator("^[A-Za-z]+([\ A-Za-z]+)*", category)
+        validated = validator(r"^[A-Za-z]+([\ A-Za-z]+)*", category)
     return category
 
 
@@ -80,5 +80,5 @@ def year_validator():
     validated = False
     while validated is False:
         year = input(PromptMessage.YEAR_INPUT_PROMPT)
-        validated = validator("[0-9]{4}$", year)
+        validated = validator(r"[0-9]{4}$", year)
     return year

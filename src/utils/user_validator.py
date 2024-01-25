@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 @validation_exception
 def validator(pattern, input_data):
-    x = re.fullmatc(pattern, input_data)
+    x = re.fullmatch(pattern, input_data)
     if x == None:
         logger.warning("Invalid Input", "users.log")
         print(PromptMessage.INVALID_INPUT)
@@ -23,18 +23,16 @@ def name_validator():
     name = ""
     while validated == False:
         name = input(PromptMessage.PROMPT_USER_MESSAGE.format("name"))
-        validated = validator("^[A-Za-z]+([\ A-Za-z]+)*", name)
+        validated = validator(r"^[A-Za-z]+([\ A-Za-z]+)*", name)
     return name
 
 
 # Accepted Syntax: <alphanumeric>@<alphanumeric>.<rootUrl>
-def email_validator():
-    validated = False
-    email = ""
-    while validated == False:
-        email = input(PromptMessage.PROMPT_USER_MESSAGE.format("email"))
-        validated = validator("[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}", email)
-    return email
+def email_validator(email):
+    validated = validator(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}", email)
+    if validated:
+        return True
+    return False
 
 
 # Accepted Syntax: <M/F>
@@ -43,7 +41,7 @@ def gender_validator():
     validated = False
     while validated == False:
         gender = input(PromptMessage.PROMPT_USER_MESSAGE.format("gender")).upper()
-        validated = validator("[M,F]{1}$", gender)
+        validated = validator(r"[M,F]{1}$", gender)
     return gender
 
 
@@ -53,7 +51,7 @@ def phone_validator():
     validated = False
     while validated == False:
         phone_no = input(PromptMessage.PROMPT_USER_MESSAGE.format("Phone Number"))
-        validated = validator("^[0-9]{10}$", phone_no)
+        validated = validator(r"^[0-9]{10}$", phone_no)
     return phone_no
 
 
@@ -63,18 +61,16 @@ def shop_validator():
     validated = False
     while validated == False:
         shop = input(PromptMessage.SHOP_NAME_PROMPT)
-        validated = validator("^[A-Za-z]+([\ A-Za-z]+)*", shop)
+        validated = validator(r"^[A-Za-z]+([\ A-Za-z]+)*", shop)
     return shop
 
 
 # Accepted Syntax - Don't Know
-def password_validator():
-    password = ""
-    validated = False
-    while validated == False:
-        password = maskpass.advpass()
-        validated = validator(
-            "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!#%*?&]{6,20}$",
-            password,
-        )
-    return password
+def password_validator(password):
+    validated = validator(
+        r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!#%*?&]{6,20}$",
+        password,
+    )
+    if validated:
+        return True
+    return False
