@@ -13,6 +13,8 @@ python-dotenv = "*"
 flask-smorest = "*"
 marshmallow = "*"
 flask-jwt-extended = "*"
+fastapi = "*"
+uvicorn = {extras = ["standard"], version = "*"}
 
 [dev-packages]
 
