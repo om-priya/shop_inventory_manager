@@ -19,3 +19,7 @@ class Transaction:
         params = (user_id, year)
         sales_amount = DAO.read_from_database(TransactionQuery.GET_SALES, params)
         return sales_amount
+
+with DatabaseConnection("store.db") as connection:
+    cursor = connection.cursor()
+    cursor.execute(TransactionQuery.CREATE_TABLE)

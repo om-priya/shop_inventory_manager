@@ -1,59 +1,47 @@
 from marshmallow import fields, Schema, validate
+from pydantic import BaseModel, Field, ValidationError, validator
+
+from utils.user_validator import password_validator
 
 
-class LoginSchema(Schema):
-    email = fields.String(
-        required=True,
-        validate=validate.Regexp("[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}"),
-    )
-    password = fields.String(
-        required=True,
-        validate=validate.Regexp(
-            "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!#%*?&]{6,20}$"
-        ),
-    )
+class LoginSchema(BaseModel):
+    email: str = Field(pattern=r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}")
+    password: str = Field(min_length=6, max_length=20)
+
+    @validator("password")
+    def validate_password(cls, value):
+        if not password_validator(value):
+            raise ValidationError("Password is not valid")
+        return value
 
 
-class SignUpSchema(Schema):
-    name = fields.String(
-        required=True, validate=validate.Regexp("^[A-Za-z]+([\ A-Za-z]+)*")
-    )
-    email = fields.String(
-        required=True,
-        validate=validate.Regexp("[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}"),
-    )
-    phone = fields.String(required=True, validate=validate.Regexp("^[0-9]{10}$"))
-    gender = fields.String(required=True, validate=validate.Regexp("[M,F]{1}$"))
-    role = fields.String(required=True, validate=validate.Regexp("\bowner\b"))
-    shop_name = fields.String(
-        required=True, validate=validate.Regexp("^[A-Za-z]+([\ A-Za-z]+)*")
-    )
-    password = fields.String(
-        required=True,
-        validate=validate.Regexp(
-            "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!#%*?&]{6,20}$"
-        ),
-    )
+class SignUpSchema(BaseModel):
+    name: str = Field(pattern=r"^[A-Za-z]+([\ A-Za-z]+)*")
+    email: str = Field(pattern=r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}")
+    phone: str = Field(pattern=r"^[0-9]{10}$")
+    gender: str = Field(pattern=r"[M,F]{1}$")
+    role: str = Field(pattern=r"\bowner\b")
+    shop_name: str = Field(pattern=r"^[A-Za-z]+([\ A-Za-z]+)*")
+    password: str = Field(min_length=6, max_length=20)
 
-class ProductSchema(Schema):
-    name = fields.String(
-        required=True, validate=validate.Regexp("^[A-Za-z]+([\ A-Za-z]+)*")
-    )
-    price = fields.String(
-        required=True, validate=validate.Regexp("[0-9]*[.][0-9]*")
-    )
-    quantity = fields.String(
-        required=True, validate=validate.Regexp("\d+")
-    )
-    discount = fields.String(
-        required=True, validate=validate.Regexp("[0-9]*[.][0-9]*")
-    )
-    category = fields.String(
-        required=True, validate=validate.Regexp("^[A-Za-z]+([\ A-Za-z]+)*")
-    )
+    @validator("password")
+    def validate_password(cls, value):
+        if not password_validator(value):
+            raise ValidationError("Password is not valid")
+        return value
 
-class GetSalesSchema(Schema):
-    year = fields.Int(required=True, validate=validate.Regexp("[0-9]{4}$"))
 
-class ProductIdSchema(Schema):
-    product_id = fields.String(required=True, validate=validate.Regexp("^[A-Za-z0-9]{8}$"))
+class ProductSchema(BaseModel):
+    name: str = Field(pattern=r"^[A-Za-z]+([\ A-Za-z]+)*")
+    price: str = Field(pattern=r"[0-9]*[.][0-9]*")
+    quantity: str = Field(pattern=r"\d+")
+    discount: str = Field(pattern=r"[0-9]*[.][0-9]*")
+    category: str = Field(pattern=r"^[A-Za-z]+([\ A-Za-z]+)*")
+
+
+class GetSalesSchema(BaseModel):
+    year: str = Field(pattern=r"[0-9]{4}$")
+
+
+class ProductIdSchema(BaseModel):
+    product_id: str = Field(pattern=r"^[A-Za-z0-9]{8}$")

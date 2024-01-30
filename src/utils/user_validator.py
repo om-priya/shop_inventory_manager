@@ -7,7 +7,6 @@ from config.prompt_message import PromptMessage
 logger = logging.getLogger(__name__)
 
 
-@validation_exception
 def validator(pattern, input_data):
     x = re.fullmatch(pattern, input_data)
     if x == None:

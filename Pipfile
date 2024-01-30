@@ -14,7 +14,8 @@ flask-smorest = "*"
 marshmallow = "*"
 flask-jwt-extended = "*"
 fastapi = "*"
-uvicorn = {extras = ["standard"], version = "*"}
+uvicorn = {extras = ["standard"] }
+python-jose = "*"
 
 [dev-packages]
 
