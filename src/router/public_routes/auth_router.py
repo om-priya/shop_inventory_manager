@@ -2,7 +2,8 @@ from fastapi import APIRouter, Depends, Body
 from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from typing import Annotated
-
+from datetime import datetime, timedelta
+from time import timezone
 from controller import user_controller, auth_controller
 from schema.schema import LoginSchema, SignUpSchema
 import sqlite3
@@ -27,7 +28,14 @@ async def login(user_info: LoginSchema):
         )
         if not valid_user:
             return JSONResponse(status_code=404, content={"message": "Invalid User"})
-        access_token = JwtHandler.generate_token({"admin": True, "user_id": user_id})
+        expires_delta = timedelta(minutes=20)
+        access_token = JwtHandler.generate_token(
+            {
+                "admin": True,
+                "user_id": user_id,
+                "exp": datetime.now(timezone.utc) + expires_delta,
+            }
+        )
         return JSONResponse(status_code=200, content={"access_token": access_token})
     except sqlite3.Error:
         return JSONResponse(
