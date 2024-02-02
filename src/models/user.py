@@ -4,6 +4,8 @@ from database.database_connector import DatabaseConnection
 import logging
 from config.user_query import UserQuery
 from config.prompt_message import PromptMessage
+from config.product_query import DatabaseConfig
+
 
 logger = logging.getLogger(__name__)
 
@@ -38,7 +40,7 @@ class ShopOwner(Human):
 
     # saving users to user-file
     def save_user(self):
-        with DatabaseConnection("store.db") as connection:
+        with DatabaseConnection(DatabaseConfig.DB_PATH) as connection:
             cursor = connection.cursor()
             cursor.execute(UserQuery.CREATE_USER_TABLE)
             data_tuple = (

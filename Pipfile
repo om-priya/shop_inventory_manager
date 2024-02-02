@@ -16,6 +16,11 @@ flask-jwt-extended = "*"
 fastapi = "*"
 uvicorn = {extras = ["standard"] }
 python-jose = "*"
+pytest = "*"
+tox = "*"
+pytest-cov = "*"
+pytest-mock = "*"
+httpx = "*"
 
 [dev-packages]
 

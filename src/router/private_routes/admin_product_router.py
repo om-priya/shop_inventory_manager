@@ -10,11 +10,9 @@ from controller.admin_product_controller import (
     delete_product,
     update_product,
 )
-from flask import jsonify
 from schema.schema import ProductSchema
-from products.product import Products
+from models.product import Products
 
-# blp = Blueprint("Admin_Products", __name__, url_prefix="/api/v1/admin")
 
 admin_product_router = APIRouter(prefix="/api/v1/admin")
 
@@ -85,7 +83,7 @@ async def get_single_product(
 
 
 @admin_product_router.put("/products/{product_id}")
-async def delete_product(
+async def put_update_product(
     product_id: product_id_schema,
     product_info: ProductSchema,
     user_id: Annotated[str, Depends(get_user_id_from_token)],

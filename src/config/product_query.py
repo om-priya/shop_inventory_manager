@@ -22,3 +22,8 @@ class ProductQuery:
     )
     FETCH_ALL_PRODUCT = "SELECT p.id, p.name, p.price, p.quantity, u.shop_name FROM product as p JOIN user as u ON p.user_id = u.Id"
     FETCH_SINGLE_PRODUCT = "SELECT * FROM product WHERE id = (?)"
+
+
+class DatabaseConfig:
+    DB_PATH = "store.db"
+    TEST_DB = "test.db"

@@ -1,5 +1,4 @@
-from marshmallow import fields, Schema, validate
-from pydantic import BaseModel, Field, ValidationError, validator
+from pydantic import BaseModel, Field, ValidationError, field_validator
 
 from utils.user_validator import password_validator
 
@@ -8,7 +7,7 @@ class LoginSchema(BaseModel):
     email: str = Field(pattern=r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}")
     password: str = Field(min_length=6, max_length=20)
 
-    @validator("password")
+    @field_validator("password")
     def validate_password(cls, value):
         if not password_validator(value):
             raise ValidationError("Password is not valid")
@@ -24,7 +23,7 @@ class SignUpSchema(BaseModel):
     shop_name: str = Field(pattern=r"^[A-Za-z]+([\ A-Za-z]+)*")
     password: str = Field(min_length=6, max_length=20)
 
-    @validator("password")
+    @field_validator("password")
     def validate_password(cls, value):
         if not password_validator(value):
             raise ValidationError("Password is not valid")

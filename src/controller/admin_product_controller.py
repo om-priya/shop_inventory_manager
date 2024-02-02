@@ -1,7 +1,7 @@
-from datetime import datetime
 from database.db_access import DbAccess as DAO
 import logging
 from config.product_query import ProductQuery
+import sqlite3
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +28,7 @@ def find_product(product_id, user_id):
 def get_product_by_id(product_id, user_id):
     product = find_product(product_id, user_id)
     if not product:
-        pass
+        return None
     else:
         return product
 
@@ -51,7 +51,7 @@ def update_product(product_id, user_id, updated_field):
     product = find_product(product_id, user_id)
     if not product:
         logger.info(f"{product_id} Product Not Found", "products.log")
-        # raise some error
+        raise sqlite3.Error
 
     params = (
         updated_field["name"],
@@ -61,10 +61,7 @@ def update_product(product_id, user_id, updated_field):
         updated_field["category"],
     )
     # Setting new value to the db
-    DAO.write_to_database(
-        ProductQuery.UPDATE_PRODUCT,
-        params
-    )
+    DAO.write_to_database(ProductQuery.UPDATE_PRODUCT, params)
     logger.info(f"Rows Updated Successfully for {product_id}", "products.log")
 
 
@@ -75,8 +72,7 @@ def delete_product(product_id, user_id):
     product = find_product(product_id, user_id)
     if not product:
         logger.info(f"{product_id} Product Not Found", "products.log")
-        # raise product not found
-        return
+        raise sqlite3.Error
     params = (product_id, user_id.strip())
     DAO.write_to_database(ProductQuery.DELETE_PRODUCT, params)
     logger.info(f"{product_id} Deleted Successfully", "products.log")

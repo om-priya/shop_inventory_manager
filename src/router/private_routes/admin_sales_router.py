@@ -5,9 +5,8 @@ from fastapi.responses import JSONResponse
 from router.public_routes.auth_router import get_user_id_from_token
 from schema.schema import GetSalesSchema
 import sqlite3
-from controller.helper.check_admin import check_admin
 from schema.schema import GetSalesSchema
-from transactions.transaction import Transaction
+from models.transaction import Transaction
 
 
 sales_router = APIRouter(prefix="/api/v1/admin")

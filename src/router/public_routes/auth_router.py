@@ -1,10 +1,10 @@
-from fastapi import APIRouter, Depends, Body
+from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.security import OAuth2PasswordBearer
 from typing import Annotated
 from datetime import datetime, timedelta
 from time import timezone
-from controller import user_controller, auth_controller
+from controller import auth_controller
 from schema.schema import LoginSchema, SignUpSchema
 import sqlite3
 from utils.jwt_token import JwtHandler
@@ -27,7 +27,9 @@ async def login(user_info: LoginSchema):
             user_info.email, user_info.password
         )
         if not valid_user:
-            return JSONResponse(status_code=404, content={"message": "Invalid User"})
+            return JSONResponse(
+                status_code=404, content={"success": False, "message": "Invalid User"}
+            )
         expires_delta = timedelta(minutes=20)
         access_token = JwtHandler.generate_token(
             {
@@ -36,14 +38,18 @@ async def login(user_info: LoginSchema):
                 "exp": datetime.now(timezone.utc) + expires_delta,
             }
         )
-        return JSONResponse(status_code=200, content={"access_token": access_token})
+        return JSONResponse(
+            status_code=200, content={"success": True, "access_token": access_token}
+        )
     except sqlite3.Error:
         return JSONResponse(
-            status_code=500, content={"message": "something went wrong in db"}
+            status_code=500,
+            content={"success": False, "message": "something went wrong in db"},
         )
     except Exception:
         return JSONResponse(
-            status_code=500, content={"message": "Something went wrong"}
+            status_code=500,
+            content={"success": False, "message": "Something went wrong"},
         )
 
 
@@ -59,7 +65,11 @@ async def signup(user_info: SignUpSchema):
         auth_controller.sign_up(owner_data)
     except sqlite3.Error:
         return JSONResponse(
-            status_code=500, content={"message": "something went wrong in db"}
+            status_code=500,
+            content={"success": False, "message": "something went wrong in db"},
         )
     except Exception:
-        JSONResponse(status_code=500, content={"message": "Something went wrong"})
+        JSONResponse(
+            status_code=500,
+            content={"success": False, "message": "Something went wrong"},
+        )

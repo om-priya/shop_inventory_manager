@@ -1,10 +1,10 @@
 from database.database_connector import DatabaseConnection
-
+from config.product_query import DatabaseConfig
 
 class DbAccess:
     @staticmethod
     def read_from_database(query, params=None):
-        with DatabaseConnection("store.db") as conn:
+        with DatabaseConnection(DatabaseConfig.DB_PATH) as conn:
             cursor = conn.cursor()
             if params is None:
                 cursor.execute(query)
@@ -15,7 +15,7 @@ class DbAccess:
 
     @staticmethod
     def write_to_database(query, params=None):
-        with DatabaseConnection("store.db") as conn:
+        with DatabaseConnection(DatabaseConfig.DB_PATH) as conn:
             cursor = conn.cursor()
             if params is None:
                 cursor.execute(query)
