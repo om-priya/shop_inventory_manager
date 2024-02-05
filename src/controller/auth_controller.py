@@ -1,10 +1,12 @@
 from database.database_connector import DatabaseConnection
 from config.user_query import UserQuery
+from config.product_query import DatabaseConfig
 from utils.encryption import *
 from models.user import ShopOwner
 
+
 def check_login(email, password):
-    with DatabaseConnection("store.db") as connection:
+    with DatabaseConnection(DatabaseConfig.DB_PATH) as connection:
         cursor = connection.cursor()
         params = (email,)
         cursor.execute(UserQuery.LOGIN_QUERY, params)

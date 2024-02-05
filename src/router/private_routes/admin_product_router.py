@@ -25,16 +25,21 @@ async def get_all_products(user_id: Annotated[str, Depends(get_user_id_from_toke
         products = show_products(user_id)
 
         if not products:
-            raise Exception
+            return JSONResponse(
+                status_code=404,
+                content={"success": False, "message": "Product Not Found"},
+            )
 
         return JSONResponse({"success": True, "data": products})
     except sqlite3.Error:
         return JSONResponse(
-            status_code=500, content={"message": "something went wrong in db"}
+            status_code=500,
+            content={"success": False, "message": "something went wrong in db"},
         )
     except Exception:
         return JSONResponse(
-            status_code=500, content={"message": "something went wrong"}
+            status_code=500,
+            content={"success": False, "message": "something went wrong"},
         )
 
 
@@ -49,14 +54,18 @@ async def create_product(
 
         new_product = Products(product_obj)
         new_product.save_product()
-        return JSONResponse({"success": True, "data": "New product created"})
+        return JSONResponse(
+            status_code=201, content={"success": True, "data": "New product created"}
+        )
     except sqlite3.Error:
         return JSONResponse(
-            status_code=500, content={"message": "something went wrong in db"}
+            status_code=500,
+            content={"success": False, "message": "something went wrong in db"},
         )
     except Exception:
         return JSONResponse(
-            status_code=500, content={"message": "something went wrong"}
+            status_code=500,
+            content={"success": False, "message": "something went wrong"},
         )
 
 
@@ -69,16 +78,21 @@ async def get_single_product(
         product = get_product_by_id(product_id, user_id)
 
         if not product:
-            raise Exception
+            return JSONResponse(
+                status_code=404,
+                content={"success": False, "message": "Product Not Found"},
+            )
 
-        return JSONResponse({"success": True, "data": product})
+        return JSONResponse(status_code=200, content={"success": True, "data": product})
     except sqlite3.Error:
         return JSONResponse(
-            status_code=500, content={"message": "something went wrong in db"}
+            status_code=500,
+            content={"success": False, "message": "something went wrong in db"},
         )
     except Exception:
         return JSONResponse(
-            status_code=500, content={"message": "something went wrong"}
+            status_code=500,
+            content={"success": False, "message": "something went wrong"},
         )
 
 
@@ -90,30 +104,55 @@ async def put_update_product(
 ):
     try:
         update_product(product_id, user_id, product_info.model_dump())
-        return {"code": 200, "message": "Products with Id Updated Successfully"}
-    except sqlite3.Error:
         return JSONResponse(
-            status_code=500, content={"message": "something went wrong in db"}
+            status_code=200,
+            content={
+                "success": True,
+                "message": "Products with Id Updated Successfully",
+            },
+        )
+    except ValueError:
+        return JSONResponse(
+            status_code=404,
+            content={"success": False, "message": "Product Not Found"},
+        )
+    except sqlite3.Error as e:
+        print(e)
+        return JSONResponse(
+            status_code=500,
+            content={"success": False, "message": "something went wrong in db"},
         )
     except Exception:
         return JSONResponse(
-            status_code=500, content={"message": "something went wrong"}
+            status_code=500,
+            content={"success": False, "message": "something went wrong"},
         )
 
 
 @admin_product_router.delete("/products/{product_id}")
-async def delete_product(
+async def delete_product_route(
     product_id: product_id_schema,
     user_id: Annotated[str, Depends(get_user_id_from_token)],
 ):
     try:
         delete_product(product_id, user_id)
-        return JSONResponse({"success": True, "data": "Product deleted Successfully"})
+        return JSONResponse(
+            status_code=200,
+            content={"success": True, "data": "Product deleted Successfully"},
+        )
+    except ValueError:
+        print("yha aaya")
+        return JSONResponse(
+            status_code=404,
+            content={"success": False, "message": "something went wrong in db"},
+        )
     except sqlite3.Error:
         return JSONResponse(
-            status_code=500, content={"message": "something went wrong in db"}
+            status_code=500,
+            content={"success": False, "message": "something went wrong in db"},
         )
     except Exception:
         return JSONResponse(
-            status_code=500, content={"message": "something went wrong"}
+            status_code=500,
+            content={"success": False, "message": "something went wrong"},
         )

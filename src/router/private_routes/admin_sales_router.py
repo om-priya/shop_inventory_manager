@@ -20,14 +20,20 @@ async def get_sales(
         year = sales_info.year
         sales_info = Transaction.get_sales(user_id, year)
 
-        return JSONResponse({"success": True, "data": sales_info})
-    except sqlite3.Error as e:
-        print(e)
+        if not sales_info:
+            return JSONResponse(
+                status_code=404, content={"success": False, "message": "No Data Found"}
+            )
         return JSONResponse(
-            status_code=500, content={"message": "something went wrong in db"}
+            status_code=200, content={"success": True, "data": sales_info}
+        )
+    except sqlite3.Error as e:
+        return JSONResponse(
+            status_code=500,
+            content={"success": False, "message": "something went wrong in db"},
         )
     except Exception as e:
-        print(e)
         return JSONResponse(
-            status_code=500, content={"message": "Something went wrong"}
+            status_code=500,
+            content={"success": False, "message": "Something went wrong"},
         )

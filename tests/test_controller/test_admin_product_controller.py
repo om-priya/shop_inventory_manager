@@ -7,7 +7,6 @@ from controller.admin_product_controller import (
     update_product,
     delete_product,
 )
-import sqlite3
 
 
 @pytest.fixture
@@ -80,7 +79,7 @@ class TestAdminProductController:
             "discount": "2.00",
             "category": "test category",
         }
-        with pytest.raises(sqlite3.Error):
+        with pytest.raises(ValueError):
             update_product("abc", "abc", updated_field)
 
     def test_delete_product_success(self, monkeypatch, mocker):
@@ -100,5 +99,5 @@ class TestAdminProductController:
             "controller.admin_product_controller.find_product",
             lambda *args: None,
         )
-        with pytest.raises(sqlite3.Error):
+        with pytest.raises(ValueError):
             delete_product("abc", "abc")

@@ -2,8 +2,7 @@ from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordBearer
 from typing import Annotated
-from datetime import datetime, timedelta
-from time import timezone
+from datetime import datetime, timedelta, timezone
 from controller import auth_controller
 from schema.schema import LoginSchema, SignUpSchema
 import sqlite3
@@ -46,7 +45,8 @@ async def login(user_info: LoginSchema):
             status_code=500,
             content={"success": False, "message": "something went wrong in db"},
         )
-    except Exception:
+    except Exception as e:
+        print(e)
         return JSONResponse(
             status_code=500,
             content={"success": False, "message": "Something went wrong"},
@@ -63,6 +63,10 @@ async def signup(user_info: SignUpSchema):
     try:
         owner_data = user_info.model_dump()
         auth_controller.sign_up(owner_data)
+        return JSONResponse(
+            status_code=200,
+            content={"success": True, "message": "User Signed Up Successfully"},
+        )
     except sqlite3.Error:
         return JSONResponse(
             status_code=500,

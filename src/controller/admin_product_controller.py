@@ -51,7 +51,7 @@ def update_product(product_id, user_id, updated_field):
     product = find_product(product_id, user_id)
     if not product:
         logger.info(f"{product_id} Product Not Found", "products.log")
-        raise sqlite3.Error
+        raise ValueError
 
     params = (
         updated_field["name"],
@@ -59,6 +59,8 @@ def update_product(product_id, user_id, updated_field):
         updated_field["quantity"],
         updated_field["discount"],
         updated_field["category"],
+        product_id,
+        user_id,
     )
     # Setting new value to the db
     DAO.write_to_database(ProductQuery.UPDATE_PRODUCT, params)
@@ -72,7 +74,7 @@ def delete_product(product_id, user_id):
     product = find_product(product_id, user_id)
     if not product:
         logger.info(f"{product_id} Product Not Found", "products.log")
-        raise sqlite3.Error
+        raise ValueError
     params = (product_id, user_id.strip())
     DAO.write_to_database(ProductQuery.DELETE_PRODUCT, params)
     logger.info(f"{product_id} Deleted Successfully", "products.log")

@@ -37,7 +37,7 @@ async def get_single_product(product_id):
     try:
         product = user_controller.get_product_by_id_public(product_id)
         if not product:
-            JSONResponse(
+            return JSONResponse(
                 status_code=404, content={"success": False, "message": "No data found"}
             )
         return JSONResponse(status_code=200, content={"success": True, "data": product})
