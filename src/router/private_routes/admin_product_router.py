@@ -55,7 +55,7 @@ async def create_product(
         new_product = Products(product_obj)
         new_product.save_product()
         return JSONResponse(
-            status_code=201, content={"success": True, "data": "New product created"}
+            status_code=201, content={"success": True, "message": "New product created"}
         )
     except sqlite3.Error:
         return JSONResponse(
@@ -141,10 +141,9 @@ async def delete_product_route(
             content={"success": True, "data": "Product deleted Successfully"},
         )
     except ValueError:
-        print("yha aaya")
         return JSONResponse(
             status_code=404,
-            content={"success": False, "message": "something went wrong in db"},
+            content={"success": False, "message": "Product Not Found"},
         )
     except sqlite3.Error:
         return JSONResponse(

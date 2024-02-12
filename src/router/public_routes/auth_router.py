@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordBearer
 from typing import Annotated
@@ -10,10 +10,15 @@ from utils.jwt_token import JwtHandler
 
 auth_router = APIRouter(prefix="/api/v1")
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/v1/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/v1/login", auto_error=False)
 
 
 async def get_user_id_from_token(token: Annotated[str, Depends(oauth2_scheme)]):
+    if not token:
+        raise HTTPException(
+            status_code=401,
+            detail={"success": False, "message": "Token is not provided"},
+        )
     decoded_data = JwtHandler.decode_token(token)
     return decoded_data["user_id"]
 
@@ -55,7 +60,10 @@ async def login(user_info: LoginSchema):
 
 @auth_router.post("/logout")
 async def logout():
-    return {"message": "Log Out SuccessFully"}
+    return JSONResponse(
+        status_code=200,
+        content={"success": True, "message": "Logged Out Successfully"},
+    )
 
 
 @auth_router.post("/signup")
@@ -64,7 +72,7 @@ async def signup(user_info: SignUpSchema):
         owner_data = user_info.model_dump()
         auth_controller.sign_up(owner_data)
         return JSONResponse(
-            status_code=200,
+            status_code=201,
             content={"success": True, "message": "User Signed Up Successfully"},
         )
     except sqlite3.Error:

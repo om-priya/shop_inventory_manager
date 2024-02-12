@@ -12,7 +12,11 @@ def check_login(email, password):
         cursor.execute(UserQuery.LOGIN_QUERY, params)
         user_info = cursor.fetchone()
         # decrypting the db password
-        db_password = decrypt_password(user_info[0])
+
+    if not user_info:
+        return False, "Not Valid"
+
+    db_password = decrypt_password(user_info[0])
 
     # Converting the entered_pass to bytes and then comparing
     byte_enter_pass = bytes(password, "utf-8")

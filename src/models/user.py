@@ -5,7 +5,7 @@ import logging
 from config.user_query import UserQuery
 from config.prompt_message import PromptMessage
 from config.product_query import DatabaseConfig
-
+from utils.encryption import encrypt_password
 
 logger = logging.getLogger(__name__)
 
@@ -36,7 +36,7 @@ class ShopOwner(Human):
         )
         self.role = owner_obj["role"]
         self.shop_name = owner_obj["shop_name"]
-        self.password = owner_obj["password"]
+        self.password = encrypt_password(owner_obj["password"])
 
     # saving users to user-file
     def save_user(self):

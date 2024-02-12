@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, ValidationError, field_validator
+from pydantic import BaseModel, Field, field_validator
 
 from utils.user_validator import password_validator
 
@@ -10,7 +10,7 @@ class LoginSchema(BaseModel):
     @field_validator("password")
     def validate_password(cls, value):
         if not password_validator(value):
-            raise ValidationError("Password is not valid")
+            raise ValueError("Password is not valid")
         return value
 
 
@@ -26,7 +26,7 @@ class SignUpSchema(BaseModel):
     @field_validator("password")
     def validate_password(cls, value):
         if not password_validator(value):
-            raise ValidationError("Password is not valid")
+            raise ValueError("Password is not valid")
         return value
 
 

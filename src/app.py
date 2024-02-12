@@ -10,8 +10,3 @@ app.include_router(product_router)
 app.include_router(auth_router)
 app.include_router(sales_router)
 app.include_router(admin_product_router)
-
-
-@app.get("/")
-async def server_check():
-    return {"message": "Server is running"}

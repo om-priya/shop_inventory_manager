@@ -1,4 +1,5 @@
-from jose import jwt
+from jose import jwt, JWTError
+from fastapi import HTTPException
 
 
 class JwtHandler:
@@ -9,4 +10,10 @@ class JwtHandler:
 
     @staticmethod
     def decode_token(token):
-        return jwt.decode(token, "secretkey")
+        try:
+            return jwt.decode(token, "secretkey")
+        except JWTError:
+            raise HTTPException(
+                status_code=401,
+                detail={"success": False, "message": "Invalid or missing Token"},
+            )

@@ -3,6 +3,7 @@ from database.db_access import DbAccess as DAO
 from config.transaction_query import TransactionQuery
 from config.product_query import DatabaseConfig
 
+
 class Transaction:
     @staticmethod
     def save_info(order_details):

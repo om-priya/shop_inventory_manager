@@ -28,6 +28,7 @@ async def get_sales(
             status_code=200, content={"success": True, "data": sales_info}
         )
     except sqlite3.Error as e:
+        print(e)
         return JSONResponse(
             status_code=500,
             content={"success": False, "message": "something went wrong in db"},
