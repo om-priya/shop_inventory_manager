@@ -1,10 +1,12 @@
 from database.database_connector import DatabaseConnection
 from config.product_query import DatabaseConfig
 
+
 class DbAccess:
     @staticmethod
     def read_from_database(query, params=None):
         with DatabaseConnection(DatabaseConfig.DB_PATH) as conn:
+            print(DatabaseConfig.DB_PATH)
             cursor = conn.cursor()
             if params is None:
                 cursor.execute(query)

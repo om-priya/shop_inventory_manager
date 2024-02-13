@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 
 from controller import user_controller
 import sqlite3
-
+from config.product_query import DatabaseConfig
 product_router = APIRouter(prefix="/api/v1")
 
 
@@ -20,6 +20,7 @@ def get_all_products():
         )
     except sqlite3.Error as e:
         print(e)
+        print(DatabaseConfig.DB_PATH)
         return JSONResponse(
             status_code=500,
             content={"success": False, "message": "something went wrong in db"},
