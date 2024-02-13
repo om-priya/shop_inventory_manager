@@ -2,14 +2,17 @@
 
 from cryptography.fernet import Fernet
 import logging
+import os
 
 logger = logging.getLogger(__name__)
+
+key_path = os.path.abspath(os.curdir) + "/encryption.py"
 
 try:
     # To get the key stored in .key file
     def get_key():
         """To read key from the file in binary format"""
-        with open("encrypt_key.key", "rb") as file:
+        with open(key_path, "rb") as file:
             key = file.read()
             return key
 
@@ -29,4 +32,4 @@ try:
         return plain_pass
 
 except Exception:
-    logger.critical("Something Wrong with Encryption", "users.log")
+    logger.critical("Something Wrong with Encryption")
