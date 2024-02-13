@@ -6,7 +6,7 @@ import os
 
 logger = logging.getLogger(__name__)
 
-key_path = os.path.abspath(os.curdir) + "/encryption.py"
+key_path = os.path.abspath(os.curdir) + "/encrypt_key.key"
 
 try:
     # To get the key stored in .key file
