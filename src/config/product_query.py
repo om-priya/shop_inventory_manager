@@ -1,3 +1,6 @@
+import os
+
+
 class ProductQuery:
     CREATE_PRODUCT_TABLE = """CREATE TABLE IF NOT EXISTS product(
                                id TEXT,
@@ -25,5 +28,5 @@ class ProductQuery:
 
 
 class DatabaseConfig:
-    DB_PATH = "store.db"
+    DB_PATH = os.path.abspath(os.curdir) + "\\database\\store.db"
     TEST_DB = "test.db"

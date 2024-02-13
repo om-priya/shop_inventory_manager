@@ -8,7 +8,6 @@ logger = logging.getLogger(__name__)
 # To showcase all the products
 def show_products():
     products_data = DAO.read_from_database(ProductQuery.FETCH_ALL_PRODUCT)
-    print(products_data)
     return products_data
 
 
