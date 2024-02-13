@@ -28,5 +28,5 @@ class ProductQuery:
 
 
 class DatabaseConfig:
-    DB_PATH = os.path.abspath(os.curdir) + "\\database\\store.db"
+    DB_PATH = os.path.abspath(os.curdir) + "/src/database/store.db"
     TEST_DB = "test.db"
