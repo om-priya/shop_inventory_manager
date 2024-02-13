@@ -3,5 +3,4 @@ __pycache__
 encrypt_key.key
 users.log
 products.log
-store.db
 .flaskenv
